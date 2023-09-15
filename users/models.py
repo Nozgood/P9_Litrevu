@@ -1,8 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User as DjangoUser
+from django.contrib.auth.models import AbstractUser
 from litrevu import settings
 
-class User(DjangoUser):
+class User(AbstractUser):
     """Model used to manage User system, herited from django standard User model"""
     pass
 
