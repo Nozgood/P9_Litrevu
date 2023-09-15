@@ -17,9 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 import users.views
+import litrevu_management.views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', users.views.login),
+    path('login/', users.views.login_user, name='login'),
     path('signup/', users.views.signup),
+    path('logout/', users.views.logout_user, name='logout'),
+    path('', litrevu_management.views.home, name='home'),
+    path('admin/', admin.site.urls),
 ]
