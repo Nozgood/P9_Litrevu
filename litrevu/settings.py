@@ -134,3 +134,8 @@ AUTH_USER_MODEL = "users.User"
 # LOGIN_URL option permet d'indiquer au decorateur login_required vers quel page il doit rediriger lorsque le user
 # n'est pas connecté
 LOGIN_URL = 'login'
+
+
+# LOGIN_REDIRECT_URL indique aux vues génériques (loginview) vers quel url je dois rediriger lorsque la connexion à
+# réussi
+LOGIN_REDIRECT_URL = 'home'

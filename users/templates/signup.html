@@ -5,7 +5,7 @@
     </h1>
     <form action="" method="post" novalidate>
     {% csrf_token %}
-    {{ user_form.as_p }}
+    {{ user_form.as_div }}
         <input type="submit" value="S'inscrire">
     </form>
 {% endblock content %}
