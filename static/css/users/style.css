@@ -1,0 +1,14 @@
+.login {
+    padding: var(--default-padding-desktop);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.login__login {
+    width: 50%;
+}
+
+.login__signup {
+    width: 50%;
+}

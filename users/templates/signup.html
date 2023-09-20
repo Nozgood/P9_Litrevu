@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+    <link rel="stylesheet" href="{% static 'css/users/style.css' %}">
+{% endblock add_css %}
 {% block content %}
     <h1>
-    SIGNUP
+        SIGNUP
     </h1>
     <form action="" method="post" novalidate>
-    {% csrf_token %}
-    {{ user_form.as_div }}
+        {% csrf_token %}
+        {{ user_form.as_div }}
         <input type="submit" value="S'inscrire">
     </form>
+    <div class="signup__back">
+        <a href="{% url 'login' %}">Revenir</a>
+    </div>
 {% endblock content %}
