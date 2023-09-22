@@ -8,6 +8,10 @@
     --transition-animation: all 400ms ease;
 }
 
+body {
+    background-color: #FFFBFA;
+}
+
 h1,
 h2,
 h3,
