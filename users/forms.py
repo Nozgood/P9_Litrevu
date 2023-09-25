@@ -1,5 +1,4 @@
 from django import forms
-from users.models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
@@ -14,9 +13,10 @@ class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=64,
         label="Username",
+        widget=forms.TextInput(attrs={"class": "form-control"})
     )
     password = forms.CharField(
         max_length=64,
         label="Password",
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
