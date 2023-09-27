@@ -44,3 +44,10 @@ def signup(request):
         'signup.html',
         {'user_form': user_form},
     )
+
+
+def following(request):
+    return render(
+        request,
+        template_name="following.html",
+    )

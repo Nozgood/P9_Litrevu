@@ -25,6 +25,7 @@ urlpatterns = [
     path('login/', users.views.user_login, name='login'),
     path('signup/', users.views.signup, name='signup'),
     path('logout/', users.views.logout_user, name='logout'),
+    path('following/', users.views.following, name='following'),
     path('', litrevu_management.views.home, name='home'),
     path('admin/', admin.site.urls),
 ]
