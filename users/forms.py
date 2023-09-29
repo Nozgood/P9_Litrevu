@@ -12,7 +12,7 @@ class SignupForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields["email"].label = "Email"
         self.fields["password1"].label = "Mot de passe"
-        self.fields["password2"].label = "Confirmer mot de passe"
+        self.fields["password2"].label = 'Confirmer mot de passe'
         self.fields["username"].help_text = USERNAME_VALIDATION_TEXT
         self.fields["password1"].help_text = PASSWORD_VALIDATION_TEXT
         self.fields["password2"].help_text = PASSWORD_2_VALIDATION_TEXT
@@ -21,8 +21,6 @@ class SignupForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        print(f"username: {username}")
-
         if len(username) > 15:
             raise forms.ValidationError("le nom d'utilisateur ne peut pas contenir plus de 15 caractères")
 
@@ -45,4 +43,12 @@ class LoginForm(forms.Form):
         max_length=64,
         label="Mot de passe",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+
+class FollowUserForm(forms.Form):
+    username = forms.CharField(
+        max_length=64,
+        label="Nom d'utilisateur",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )

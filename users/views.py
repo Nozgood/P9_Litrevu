@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 import users.forms
+from users.models import User, UserFollows
 from litrevu import settings
 
 
@@ -46,8 +48,30 @@ def signup(request):
     )
 
 
+@login_required
 def following(request):
+    message = ""
+    user_to_follow_form = users.forms.FollowUserForm(request.POST if request.method == "POST" else None)
+    if request.method == "POST" and user_to_follow_form.is_valid():
+        try:
+            user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
+            connected_user = request.user
+            print(f'connected user: {connected_user.username}')
+            print(f'test: {user_to_follow}, {user_to_follow.id}')
+            UserFollows.objects.create(
+                followed_user=user_to_follow,
+                user_id=connected_user.id,
+            )
+        except User.DoesNotExist:
+            message = "cet utilisateur n'existe pas"
+
     return render(
         request,
         template_name="following.html",
+        context={
+            'form': user_to_follow_form,
+            'message': message,
+        },
     )
+
+    # TODO: create the view to get who is following me (GET)

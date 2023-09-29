@@ -5,7 +5,9 @@ from litrevu import settings
 
 class User(AbstractUser):
     """Model used to manage User system, herited from django standard User model"""
-    pass
+
+    def __str__(self):
+        return f'{self.username}'
 
 
 class UserFollows(models.Model):
