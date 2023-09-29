@@ -52,10 +52,14 @@ def signup(request):
 def following(request):
     message = ""
     user_to_follow_form = users.forms.FollowUserForm(request.POST if request.method == "POST" else None)
+    connected_user = request.user
+    following_relations = connected_user.following.all()
+    print(f'following relations: {following_relations}')
+    followed_users = [relation.followed_user for relation in following_relations]
+    print(f'test: {followed_users}')
     if request.method == "POST" and user_to_follow_form.is_valid():
         try:
             user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
-            connected_user = request.user
             print(f'connected user: {connected_user.username}')
             print(f'test: {user_to_follow}, {user_to_follow.id}')
             UserFollows.objects.create(
@@ -71,6 +75,7 @@ def following(request):
         context={
             'form': user_to_follow_form,
             'message': message,
+            'following_users': followed_users,
         },
     )
 
