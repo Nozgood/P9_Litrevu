@@ -20,4 +20,9 @@
         </div>
     {% endfor %}
     <h2 class="h2"> Abonnés </h2>
+    {% for followed_by_user in followed_by_users %}
+        <div class="mb-3">
+            {{ followed_by_user.username }}
+        </div>
+    {% endfor %}
 {% endblock content %}

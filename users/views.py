@@ -54,6 +54,9 @@ def following(request):
     user_to_follow_form = users.forms.FollowUserForm(request.POST if request.method == "POST" else None)
     connected_user = request.user
     following_relations = connected_user.following.all()
+    followed_relations = connected_user.followed_by.all()
+    followed_by_users = [relation.user for relation in followed_relations]
+    print(f'followed_by_users: {followed_by_users}')
     print(f'following relations: {following_relations}')
     followed_users = [relation.followed_user for relation in following_relations]
     print(f'test: {followed_users}')
@@ -76,6 +79,7 @@ def following(request):
             'form': user_to_follow_form,
             'message': message,
             'following_users': followed_users,
+            'followed_by_users': followed_by_users,
         },
     )
 
