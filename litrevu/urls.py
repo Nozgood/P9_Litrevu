@@ -24,9 +24,13 @@ from users.forms import LoginForm
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', litrevu_management.views.home, name='home'),
+
     path('login/', users.views.user_login, name='login'),
     path('signup/', users.views.signup, name='signup'),
     path('logout/', users.views.logout_user, name='logout'),
+
     path('following/', users.views.following, name='following'),
+    path('following/unfollow/<int:user_to_unfollow_id>/', users.views.unfollow_user, name='unfollow'),
+
     path('posts/', litrevu_management.views.posts, name='posts')
 ]

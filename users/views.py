@@ -50,37 +50,63 @@ def signup(request):
 
 @login_required
 def following(request):
-    message = ""
+    follow_error_message = ""
     user_to_follow_form = users.forms.FollowUserForm(request.POST if request.method == "POST" else None)
     connected_user = request.user
     following_relations = connected_user.following.all()
     followed_relations = connected_user.followed_by.all()
     followed_by_users = [relation.user for relation in followed_relations]
-    print(f'followed_by_users: {followed_by_users}')
-    print(f'following relations: {following_relations}')
     followed_users = [relation.followed_user for relation in following_relations]
-    print(f'test: {followed_users}')
     if request.method == "POST" and user_to_follow_form.is_valid():
-        try:
-            user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
-            print(f'connected user: {connected_user.username}')
-            print(f'test: {user_to_follow}, {user_to_follow.id}')
-            UserFollows.objects.create(
-                followed_user=user_to_follow,
-                user_id=connected_user.id,
-            )
-        except User.DoesNotExist:
-            message = "cet utilisateur n'existe pas"
+        follow_error_message = follow_user(request, user_to_follow_form, connected_user)
+        if follow_error_message == "":
+            return redirect(settings.UNFOLLOW_REDIRECT_URL)
 
     return render(
         request,
         template_name="following.html",
         context={
             'form': user_to_follow_form,
-            'message': message,
+            'message': follow_error_message,
             'following_users': followed_users,
             'followed_by_users': followed_by_users,
         },
     )
 
-    # TODO: create the view to get who is following me (GET)
+
+@login_required
+def follow_user(request, user_to_follow_form, connected_user):
+    message = ""
+    try:
+        user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
+        print(f'connected user: {connected_user.username}')
+        print(f'test: {user_to_follow}, {user_to_follow.id}')
+        UserFollows.objects.create(
+            followed_user=user_to_follow,
+            user_id=connected_user.id,
+        )
+    except User.DoesNotExist:
+        message = "cet utilisateur n'existe pas"
+    return message
+
+
+@login_required
+def unfollow_user(request, user_to_unfollow_id):
+    connected_user = request.user
+    user_to_unfollow = User.objects.get(id=user_to_unfollow_id)
+
+    if user_to_unfollow is None:
+        print("error during unfollow user: user not found")
+        return
+
+    following_relation = UserFollows.objects.get(
+        followed_user=user_to_unfollow,
+        user_id=connected_user.id,
+    )
+    if following_relation is None:
+        print(f'error during unfollow : it seems that you dont follow this person')
+
+    following_relation.delete()
+
+    print(f'following relation: {following_relation}')
+    return redirect(settings.UNFOLLOW_REDIRECT_URL)
