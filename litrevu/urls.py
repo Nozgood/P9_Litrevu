@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('following/', users.views.following, name='following'),
     path('following/unfollow/<int:user_to_unfollow_id>/', users.views.unfollow_user, name='unfollow'),
+    path('following/unblock/<int:user_to_unblock_id>/', users.views.unblock_user, name='unblock'),
 
     path('posts/', litrevu_management.views.posts, name='posts')
 ]

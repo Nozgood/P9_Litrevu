@@ -47,6 +47,16 @@ class LoginForm(forms.Form):
 
 
 class FollowUserForm(forms.Form):
+    is_follow_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    username = forms.CharField(
+        max_length=64,
+        label="Nom d'utilisateur",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+
+class BlockUserForm(forms.Form):
+    is_block_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
     username = forms.CharField(
         max_length=64,
         label="Nom d'utilisateur",

@@ -25,3 +25,21 @@ class UserFollows(models.Model):
 
     class Meta:
         unique_together = ('user', 'followed_user',)  # deprecated use constrains instead
+
+
+class UserBlocked(models.Model):
+    """Model used to manage blocking user system"""
+    user = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user"
+    )
+
+    blocked_user = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_blocked"
+    )
+
+    class Meta:
+        unique_together = ('user', 'blocked_user',)
