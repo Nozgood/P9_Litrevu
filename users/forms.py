@@ -23,7 +23,8 @@ class SignupForm(UserCreationForm):
         username = self.cleaned_data.get("username")
         if len(username) > 15:
             raise forms.ValidationError("le nom d'utilisateur ne peut pas contenir plus de 15 caractères")
-
+        return username
+    
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
         fields = ["email", "username"]
@@ -47,7 +48,7 @@ class LoginForm(forms.Form):
 
 
 class FollowUserForm(forms.Form):
-    is_follow_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    is_follow_form = forms.BooleanField(widget=forms.HiddenInput(), initial=True)
     username = forms.CharField(
         max_length=64,
         label="Nom d'utilisateur",
