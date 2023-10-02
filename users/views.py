@@ -49,7 +49,10 @@ def signup(request):
 
 @login_required
 def following(request):
-    follow_message, block_message = "", ""
+    follow_message = ""
+    block_message = ""
+    unfollow_message = ""
+    unblock_message = ""
     connected_user = request.user
     following_users = get_following_users(request, connected_user)
     followers = get_followers(request, connected_user)
@@ -61,8 +64,7 @@ def following(request):
     user_to_unfollow_form = users.forms.UnfollowUserForm(
         request.POST if request.method == "POST" and 'is_unfollow_form' in request.POST else None)
     user_to_unblock_form = users.forms.UnblockUserForm(
-        request.POST if request.method == "POST" and 'is_unblock_form' in request.POST else None
-    )
+        request.POST if request.method == "POST" and 'is_unblock_form' in request.POST else None)
     if request.method == "POST":
         if 'is_follow_form' in request.POST and user_to_follow_form.is_valid():
             print('follow form')
@@ -72,6 +74,7 @@ def following(request):
         if 'is_block_form' in request.POST and user_to_block_form.is_valid():
             print('block form')
             block_message = block_user(request, connected_user, user_to_block_form)
+            print(f'test: {block_message == ""}')
             if block_message == "":
                 return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
         if 'is_unfollow_form' in request.POST and user_to_unfollow_form.is_valid():
@@ -103,7 +106,6 @@ def following(request):
 
 @login_required
 def follow_user(request, connected_user, user_to_follow_form):
-    print('hello it"s follow system')
     try:
         user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
         if get_single_block_user(request, connected_user, user_to_follow.id) is not None:
@@ -132,10 +134,8 @@ def block_user(request, connected_user, user_to_block_form):
     return ""
 
 
-# TODO: edit this method to POST and not use the query params
 @login_required
 def unfollow_user(request, connected_user, user_to_unfollow_form):
-    print("ouaaaais UNFOLLOWWWW")
     try:
         user_to_unfollow = User.objects.get(username=user_to_unfollow_form.cleaned_data["username"])
         following_relation = UserFollows.objects.get(
@@ -151,7 +151,7 @@ def unfollow_user(request, connected_user, user_to_unfollow_form):
 @login_required
 def unblock_user(request, connected_user, user_to_unblock_form):
     try:
-        user_to_unblock = User.objects.get(username=user_to_unblock_form)
+        user_to_unblock = User.objects.get(username=user_to_unblock_form.cleaned_data["username"])
         blocked_relation = UserBlocked.objects.get(
             blocked_user=user_to_unblock,
             user_id=connected_user.id,

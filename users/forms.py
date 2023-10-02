@@ -58,7 +58,6 @@ class FollowUserForm(forms.Form):
 
 class BlockUserForm(forms.Form):
     is_block_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-    unblock = forms.BooleanField(widget=forms.HiddenInput, initial=True)
     username = forms.CharField(
         max_length=64,
         label='',
