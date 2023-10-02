@@ -1,46 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3 class="h3">Suivre ou bloquer d'autres utilisateurs</h3>
-    <h5 class="h5">Suivre</h5>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ follow_form.is_follow_form }}
-        <div class="mb-3">
-            {{ follow_form.username.label_tag }}
-            {{ follow_form.username }}
+    <div class="d-flex flex-column align-items-center">
+        <h3 class="h3 mb-5">Suivre ou bloquer d'autres utilisateurs</h3>
+        <div class="container d-flex flex-column align-items-center mb-2">
+            <h5 class="h5">Suivre</h5>
+            <div class="d-flex flex-column align-items-center">
+                <form action="" method="post"
+                      class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
+                    {% csrf_token %}
+                    <div>
+                        {{ follow_form.is_follow_form }}
+                        {{ follow_form.username }}
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Suivre</button>
+                    </div>
+                </form>
+                <div class="mb-3">
+                    {{ follow_message }}
+                </div>
+            </div>
         </div>
-        <button class="btn btn-primary" type="submit">Suivre</button>
-    </form>
-    {{ follow_message }}
-    <h5 class="h5">Bloquer</h5>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ block_form.is_block_form }}
-        <div class="mb-3">
-            {{ block_form.username.label_tag }}
-            {{ block_form.username }}
+        <div class="container d-flex flex-column align-items-center mb-5">
+            <h5 class="h5">Bloquer</h5>
+            <div class="d-flex flex-column align-items-center">
+                <form action="" method="post"
+                      class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
+                    {% csrf_token %}
+                    <div>
+                        {{ block_form.is_block_form }}
+                        {{ block_form.username }}
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Bloquer</button>
+                    </div>
+                </form>
+                <div class="mb-3">
+                    {{ block_message }}
+                </div>
+            </div>
         </div>
-        <button class="btn btn-primary" type="submit">Bloquer</button>
-    </form>
-    {{ block_message }}
-    <h3 class="h3"> Abonnements</h3>
-    {% for following_user in following_users %}
-        <div class="mb-3">
-            {{ following_user.username }}
-            <a href="{% url 'unfollow' following_user.id %}">Se désabonner</a>
+        <div class="container d-flex flex-column align-items-center gap-2 mb-5">
+            <h3 class="h3"> Abonnements</h3>
+            {% for following_user in following_users %}
+                <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
+                    {{ following_user.username }}
+                    <a class="text-decoration-none link-danger"
+                       href="{% url 'unfollow' following_user.id %}">Se
+                        désabonner</a>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    <h3 class="h3"> Abonnés </h3>
-    {% for followed_by_user in followers %}
-        <div class="mb-3">
-            {{ followed_by_user.username }}
+        <div class="container d-flex flex-column align-items-center gap-2">
+            <h3 class="h3"> Abonnés </h3>
+            {% for followed_by_user in followers %}
+                <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
+                    {{ followed_by_user.username }}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    <h3 class="h3">Bloqués</h3>
-    {% for blocked_user in blocked_users %}
-        <div class="mb-3">
-            {{ blocked_user.username }}
-            <a href="{% url 'unblock' blocked_user.id %}">Débloquer</a>
+        <div class="container d-flex flex-column align-items-center gap-2">
+            <h3 class="h3">Bloqués</h3>
+            {% for blocked_user in blocked_users %}
+                <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
+                    {{ blocked_user.username }}
+                    <a class="text-decoration-none link-primary"
+                       href="{% url 'unblock' blocked_user.id %}">Débloquer</a>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+    </div>
 {% endblock content %}

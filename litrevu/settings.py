@@ -124,4 +124,4 @@ LOGIN_URL = 'login'
 # LOGIN_REDIRECT_URL indique aux vues génériques (loginview) vers quel url je dois rediriger lorsque la connexion à
 # réussi
 LOGIN_REDIRECT_URL = 'home'
-UNFOLLOW_REDIRECT_URL = 'following'
+FOLLOWING_SYSTEM_REDIRECT_URL = 'following'

@@ -62,11 +62,11 @@ def following(request):
         if 'is_follow_form' in request.POST and user_to_follow_form.is_valid():
             follow_message = follow_user(request, user_to_follow_form, connected_user)
             if follow_message == "":
-                return redirect(settings.UNFOLLOW_REDIRECT_URL)
+                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
         if 'is_block_form' in request.POST and user_to_block_form.is_valid():
             block_message = block_user(request, connected_user, user_to_block_form)
             if block_message == "":
-                return redirect(settings.UNFOLLOW_REDIRECT_URL)
+                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
     return render(
         request,
         template_name="following.html",
@@ -143,14 +143,11 @@ def unfollow_user(request, user_to_unfollow_id):
         print(f'error during unfollow : it seems that you dont follow this person')
 
     following_relation.delete()
-
-    print(f'following relation: {following_relation}')
-    return redirect(settings.UNFOLLOW_REDIRECT_URL)
+    return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
 
 
 @login_required
 def unblock_user(request, user_to_unblock_id):
-    print(f'user to unblock id: {user_to_unblock_id}')
     connected_user = request.user
     user_to_unblock = User.objects.get(id=user_to_unblock_id)
     blocked_relation = UserBlocked.objects.get(
@@ -159,4 +156,4 @@ def unblock_user(request, user_to_unblock_id):
     )
 
     blocked_relation.delete()
-    return redirect(settings.UNFOLLOW_REDIRECT_URL)
+    return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
