@@ -58,14 +58,31 @@ def following(request):
         request.POST if request.method == "POST" and 'is_follow_form' in request.POST else None)
     user_to_block_form = users.forms.BlockUserForm(
         request.POST if request.method == "POST" and 'is_block_form' in request.POST else None)
+    user_to_unfollow_form = users.forms.UnfollowUserForm(
+        request.POST if request.method == "POST" and 'is_unfollow_form' in request.POST else None)
+    user_to_unblock_form = users.forms.UnblockUserForm(
+        request.POST if request.method == "POST" and 'is_unblock_form' in request.POST else None
+    )
     if request.method == "POST":
         if 'is_follow_form' in request.POST and user_to_follow_form.is_valid():
-            follow_message = follow_user(request, user_to_follow_form, connected_user)
+            print('follow form')
+            follow_message = follow_user(request, connected_user, user_to_follow_form)
             if follow_message == "":
                 return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
         if 'is_block_form' in request.POST and user_to_block_form.is_valid():
+            print('block form')
             block_message = block_user(request, connected_user, user_to_block_form)
             if block_message == "":
+                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
+        if 'is_unfollow_form' in request.POST and user_to_unfollow_form.is_valid():
+            print('UNfollow form')
+            unfollow_message = unfollow_user(request, connected_user, user_to_unfollow_form)
+            if unfollow_message == "":
+                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
+        if 'is_unblock_form' in request.POST and user_to_unblock_form.is_valid():
+            print('UNblock form')
+            unblock_message = unblock_user(request, connected_user, user_to_unblock_form)
+            if unblock_message == "":
                 return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
     return render(
         request,
@@ -78,8 +95,71 @@ def following(request):
             'following_users': following_users,
             'followers': followers,
             'blocked_users': blocked_users,
+            'unfollow_form': user_to_unfollow_form,
+            'unblock_form': user_to_unblock_form,
         },
     )
+
+
+@login_required
+def follow_user(request, connected_user, user_to_follow_form):
+    print('hello it"s follow system')
+    try:
+        user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
+        if get_single_block_user(request, connected_user, user_to_follow.id) is not None:
+            return "vous ne pouvez pas suivre un utilisateur qui est bloqué"
+        UserFollows.objects.create(
+            followed_user=user_to_follow,
+            user_id=connected_user.id,
+        )
+    except User.DoesNotExist:
+        return "cet utilisateur n'existe pas"
+    return ""
+
+
+@login_required
+def block_user(request, connected_user, user_to_block_form):
+    try:
+        user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
+        if get_single_following_user(request, connected_user, user_to_block.id) is not None:
+            return "vous ne pouvez pas bloquer un utilisateur que vous suivez"
+        UserBlocked.objects.create(
+            blocked_user=user_to_block,
+            user_id=connected_user.id,
+        )
+    except User.DoesNotExist:
+        return "cet utilisateur n'existe pas"
+    return ""
+
+
+# TODO: edit this method to POST and not use the query params
+@login_required
+def unfollow_user(request, connected_user, user_to_unfollow_form):
+    print("ouaaaais UNFOLLOWWWW")
+    try:
+        user_to_unfollow = User.objects.get(username=user_to_unfollow_form.cleaned_data["username"])
+        following_relation = UserFollows.objects.get(
+            followed_user=user_to_unfollow,
+            user_id=connected_user.id,
+        )
+        following_relation.delete()
+    except User.DoesNotExist:
+        return "cet utilisateur n'existe pas"
+    return ""
+
+
+@login_required
+def unblock_user(request, connected_user, user_to_unblock_form):
+    try:
+        user_to_unblock = User.objects.get(username=user_to_unblock_form)
+        blocked_relation = UserBlocked.objects.get(
+            blocked_user=user_to_unblock,
+            user_id=connected_user.id,
+        )
+        blocked_relation.delete()
+    except User.DoesNotExist:
+        return "cet utilisateur n'existe pas"
+    return ""
 
 
 def get_single_following_user(request, connected_user, following_id):
@@ -114,67 +194,3 @@ def get_blocked_users(request, connected_user):
     blocked_relations = connected_user.user.all()
     blocked_users = [relation.blocked_user for relation in blocked_relations]
     return blocked_users
-
-
-@login_required
-def follow_user(request, user_to_follow_form, connected_user):
-    try:
-        user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
-        if get_single_block_user(request, connected_user, user_to_follow.id) is not None:
-            return "vous ne pouvez pas suivre un utilisateur qui est bloqué"
-        UserFollows.objects.create(
-            followed_user=user_to_follow,
-            user_id=connected_user.id,
-        )
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-@login_required
-def block_user(request, connected_user, user_to_block_form):
-    try:
-        user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
-        if get_single_following_user(request, connected_user, user_to_block.id) is not None:
-            return "vous ne pouvez pas bloquer un utilisateur que vous suivez"
-        UserBlocked.objects.create(
-            blocked_user=user_to_block,
-            user_id=connected_user.id,
-        )
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-# TODO: edit this method to POST and not use the query params
-@login_required
-def unfollow_user(request, user_to_unfollow_id):
-    connected_user = request.user
-    user_to_unfollow = User.objects.get(id=user_to_unfollow_id)
-
-    if user_to_unfollow is None:
-        print("error during unfollow user: user not found")
-        return
-
-    following_relation = UserFollows.objects.get(
-        followed_user=user_to_unfollow,
-        user_id=connected_user.id,
-    )
-    if following_relation is None:
-        print(f'error during unfollow : it seems that you dont follow this person')
-
-    following_relation.delete()
-    return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
-
-
-@login_required
-def unblock_user(request, user_to_unblock_id):
-    connected_user = request.user
-    user_to_unblock = User.objects.get(id=user_to_unblock_id)
-    blocked_relation = UserBlocked.objects.get(
-        blocked_user=user_to_unblock,
-        user_id=connected_user.id,
-    )
-
-    blocked_relation.delete()
-    return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)

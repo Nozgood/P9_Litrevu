@@ -43,12 +43,17 @@
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnements</h3>
             {% for following_user in following_users %}
-                <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
-                    {{ following_user.username }}
-                    <a class="text-decoration-none link-danger"
-                       href="{% url 'unfollow' following_user.id %}">Se
-                        désabonner</a>
-                </div>
+                <form action="" method="post"
+                      class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
+                    {% csrf_token %}
+                    <div>
+                        {{ unfollow_form.is_unfollow_form }}
+                        {{ unfollow_form.username }}
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Se désabonner</button>
+                    </div>
+                </form>
             {% endfor %}
         </div>
         <div class="container d-flex flex-column align-items-center gap-2">
