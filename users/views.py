@@ -82,6 +82,22 @@ def following(request):
     )
 
 
+def get_single_following_user(request, connected_user, following_id):
+    following_relations = connected_user.following.all()
+    for relation in following_relations:
+        if relation.followed_user.id == following_id:
+            return relation.followed_user
+    return None
+
+
+def get_single_block_user(request, connected_user, blocking_id):
+    blocking_relations = connected_user.user.all()
+    for relation in blocking_relations:
+        if relation.blocked_user.id == blocking_id:
+            return relation.blocked_user
+    return None
+
+
 def get_following_users(request, connected_user):
     following_relations = connected_user.following.all()
     following_users = [relation.followed_user for relation in following_relations]
@@ -104,6 +120,8 @@ def get_blocked_users(request, connected_user):
 def follow_user(request, user_to_follow_form, connected_user):
     try:
         user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
+        if get_single_block_user(request, connected_user, user_to_follow.id) is not None:
+            return "vous ne pouvez pas suivre un utilisateur qui est bloqué"
         UserFollows.objects.create(
             followed_user=user_to_follow,
             user_id=connected_user.id,
@@ -117,6 +135,8 @@ def follow_user(request, user_to_follow_form, connected_user):
 def block_user(request, connected_user, user_to_block_form):
     try:
         user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
+        if get_single_following_user(request, connected_user, user_to_block.id) is not None:
+            return "vous ne pouvez pas bloquer un utilisateur que vous suivez"
         UserBlocked.objects.create(
             blocked_user=user_to_block,
             user_id=connected_user.id,
