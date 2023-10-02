@@ -16,3 +16,19 @@ def posts(request):
         request,
         'posts.html',
     )
+
+
+@login_required
+def create_ticket(request):
+    return render(
+        request,
+        'ticket.html',
+    )
+
+
+@login_required
+def create_review(request):
+    return render(
+        request,
+        'review.html',
+    )

@@ -33,5 +33,9 @@ urlpatterns = [
     path('following/unfollow/<int:user_to_unfollow_id>/', users.views.unfollow_user, name='unfollow'),
     path('following/unblock/<int:user_to_unblock_id>/', users.views.unblock_user, name='unblock'),
 
+    # demander une critique (creation de ticket)
+    path('review/ticket/create/', litrevu_management.views.create_ticket, name='create_ticket'),
+    path('review/create/', litrevu_management.views.create_review, name='create_review'),  # créer une critique
+
     path('posts/', litrevu_management.views.posts, name='posts')
 ]

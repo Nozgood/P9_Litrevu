@@ -146,6 +146,7 @@ def block_user(request, connected_user, user_to_block_form):
     return ""
 
 
+# TODO: edit this method to POST and not use the query params
 @login_required
 def unfollow_user(request, user_to_unfollow_id):
     connected_user = request.user
