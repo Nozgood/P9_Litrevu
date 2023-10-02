@@ -48,58 +48,31 @@ def signup(request):
 
 
 @login_required
-def following(request):
-    follow_message = ""
-    block_message = ""
-    unfollow_message = ""
-    unblock_message = ""
-    connected_user = request.user
-    following_users = get_following_users(request, connected_user)
-    followers = get_followers(request, connected_user)
-    blocked_users = get_blocked_users(request, connected_user)
+def following(request, unfollow=False):
     user_to_follow_form = users.forms.FollowUserForm(
-        request.POST if request.method == "POST" and 'is_follow_form' in request.POST else None)
-    user_to_block_form = users.forms.BlockUserForm(
-        request.POST if request.method == "POST" and 'is_block_form' in request.POST else None)
-    user_to_unfollow_form = users.forms.UnfollowUserForm(
-        request.POST if request.method == "POST" and 'is_unfollow_form' in request.POST else None)
-    user_to_unblock_form = users.forms.UnblockUserForm(
-        request.POST if request.method == "POST" and 'is_unblock_form' in request.POST else None)
+        request.POST if request.method == "POST" and not unfollow else None)
     if request.method == "POST":
-        if 'is_follow_form' in request.POST and user_to_follow_form.is_valid():
-            print('follow form')
-            follow_message = follow_user(request, connected_user, user_to_follow_form)
-            if follow_message == "":
-                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
-        if 'is_block_form' in request.POST and user_to_block_form.is_valid():
-            print('block form')
-            block_message = block_user(request, connected_user, user_to_block_form)
-            print(f'test: {block_message == ""}')
-            if block_message == "":
-                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
-        if 'is_unfollow_form' in request.POST and user_to_unfollow_form.is_valid():
-            print('UNfollow form')
-            unfollow_message = unfollow_user(request, connected_user, user_to_unfollow_form)
-            if unfollow_message == "":
-                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
-        if 'is_unblock_form' in request.POST and user_to_unblock_form.is_valid():
-            print('UNblock form')
-            unblock_message = unblock_user(request, connected_user, user_to_unblock_form)
-            if unblock_message == "":
-                return redirect(settings.FOLLOWING_SYSTEM_REDIRECT_URL)
+        if unfollow:
+            try:
+                UserFollows.objects.get(user=request.user, followed_user=request.POST.get("user_id")).delete()
+                return redirect("users:following")
+            except UserFollows.DoesNotExist:
+                pass
+        else:
+            if user_to_follow_form.is_valid():
+                try:
+                    UserFollows.objects.create(
+                        followed_user=User.objects.get(username=user_to_follow_form.cleaned_data["username"]),
+                        user=request.user,
+                    )
+                except:
+                    user_to_follow_form.add_error("username", "vous suivez déjà cet utilisateur")
+                return redirect("users:following")
     return render(
         request,
         template_name="following.html",
         context={
             'follow_form': user_to_follow_form,
-            'block_form': user_to_block_form,
-            'follow_message': follow_message,
-            'block_message': block_message,
-            'following_users': following_users,
-            'followers': followers,
-            'blocked_users': blocked_users,
-            'unfollow_form': user_to_unfollow_form,
-            'unblock_form': user_to_unblock_form,
         },
     )
 
@@ -176,12 +149,6 @@ def get_single_block_user(request, connected_user, blocking_id):
         if relation.blocked_user.id == blocking_id:
             return relation.blocked_user
     return None
-
-
-def get_following_users(request, connected_user):
-    following_relations = connected_user.following.all()
-    following_users = [relation.followed_user for relation in following_relations]
-    return following_users
 
 
 def get_followers(request, connected_user):

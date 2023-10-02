@@ -14,18 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from users import urls as users_urls
-import litrevu_management.views
+
+from django.urls import path
+import users.views
+
+app_name = "users"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', litrevu_management.views.home, name='home'),
-    path('users/', include(users_urls)),
-    # demander une critique (creation de ticket)
-    path('review/ticket/create/', litrevu_management.views.create_ticket, name='create_ticket'),
-    path('review/create/', litrevu_management.views.create_review, name='create_review'),  # créer une critique
-
-    path('posts/', litrevu_management.views.posts, name='posts')
+    path('login/', users.views.user_login, name='login'),
+    path('signup/', users.views.signup, name='signup'),
+    path('logout/', users.views.logout_user, name='logout'),
+    path('following/', users.views.following, name='following'),
+    path('following/<unfollow>', users.views.following, name='following'),
 ]

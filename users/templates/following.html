@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 {% block content %}
     <div class="d-flex flex-column align-items-center">
         <h3 class="h3 mb-5">Suivre ou bloquer d'autres utilisateurs</h3>
@@ -8,17 +9,9 @@
                 <form action="" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
-                    <div>
-                        {{ follow_form.is_follow_form }}
-                        {{ follow_form.username }}
-                    </div>
-                    <div>
-                        <button class="btn btn-primary" type="submit">Suivre</button>
-                    </div>
+                    {% bootstrap_form follow_form layout='inline' %}
+                    <button class="btn btn-primary" type="submit">Suivre</button>
                 </form>
-                <div class="mb-3">
-                    {{ follow_message }}
-                </div>
             </div>
         </div>
         <div class="container d-flex flex-column align-items-center mb-5">
@@ -42,14 +35,14 @@
         </div>
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnements</h3>
-            {% for following_user in following_users %}
-                <form action="" method="post"
+            {% for following_user in user.following.all %}
+                <form action="{% url 'users:following' unfollow=True %}" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
                     <div>
-                        {{ unfollow_form.is_unfollow_form }}
-                        <input type="text" name="{{ unfollow_form.username.name }}"
-                               value="{{ following_user.username }}" readonly class="form-control"/></div>
+                        <p> {{ following_user.followed_user.username }}</p>
+                        <input type="hidden" name="user_id"
+                               value="{{ following_user.followed_user.id }}" readonly class="form-control"/></div>
                     <div>
                         <button class="btn btn-primary" type="submit">Se désabonner</button>
                     </div>

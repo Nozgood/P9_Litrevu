@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
+from users.models import User
+
 USERNAME_VALIDATION_TEXT = "15 caractères maximum."
 PASSWORD_VALIDATION_TEXT = "Votre mot de passe doit contenir 8 caractères minimum."
 PASSWORD_2_VALIDATION_TEXT = "Ressaisissez le même mot de passe."
@@ -48,12 +50,16 @@ class LoginForm(forms.Form):
 
 
 class FollowUserForm(forms.Form):
-    is_follow_form = forms.BooleanField(widget=forms.HiddenInput(), initial=True)
     username = forms.CharField(
         label='',
         max_length=64,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "nom d'utilisateur"})
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not User.objects.filter(username=cleaned_data["username"]).exists():
+            self.add_error("username", "cet utilisateur n'existe pas")
 
 
 class BlockUserForm(forms.Form):

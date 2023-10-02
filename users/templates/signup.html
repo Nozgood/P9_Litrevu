@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load django_bootstrap5 %}
 {% block content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -7,7 +8,8 @@
                 <h1 class="text-center mb-4">Inscription</h1>
                 <form action="" method="post" novalidate class="mb-3">
                     {% csrf_token %}
-                    {% for field in user_form %}
+                    {% bootstrap_form user_form layout='floating' %}
+                    {% comment %}{% for field in user_form %}
                         <div class="mb-3">
                             {{ field.label_tag }}
                             {{ field }}
@@ -20,11 +22,11 @@
                                 </div>
                             {% endfor %}
                         </div>
-                    {% endfor %}
+                    {% endfor %}{% endcomment %}
                     <input type="submit" value="S'inscrire" class="btn btn-primary w-100">
                 </form>
                 <div class="text-center">
-                    <a href="{% url 'login' %}" class="d-block mt-3 text-decoration-none">Retourner</a>
+                    <a href="{% url 'users:login' %}" class="d-block mt-3 text-decoration-none">Retourner</a>
                 </div>
             </div>
         </div>
