@@ -6,7 +6,7 @@
         <div class="container d-flex flex-column align-items-center mb-2">
             <h5 class="h5">Suivre</h5>
             <div class="d-flex flex-column align-items-center">
-                <form action="" method="post"
+                <form action="{% url 'users:follow_user' %}" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
                     {% bootstrap_form follow_form layout='inline' %}
@@ -17,26 +17,20 @@
         <div class="container d-flex flex-column align-items-center mb-5">
             <h5 class="h5">Bloquer</h5>
             <div class="d-flex flex-column align-items-center">
-                <form action="" method="post"
+                <form action="{% url 'users:block_user' %}" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
-                    <div>
-                        {{ block_form.is_block_form }}
-                        {{ block_form.username }}
-                    </div>
+                    {{ block_form }}
                     <div>
                         <button class="btn btn-primary" type="submit">Bloquer</button>
                     </div>
                 </form>
-                <div class="mb-3">
-                    {{ block_message }}
-                </div>
             </div>
         </div>
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnements</h3>
             {% for following_user in user.following.all %}
-                <form action="{% url 'users:following' unfollow=True %}" method="post"
+                <form action="{% url 'users:follow_user' unfollow=True %}" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
                     <div>
@@ -59,14 +53,15 @@
         </div>
         <div class="container d-flex flex-column align-items-center gap-2">
             <h3 class="h3">Bloqués</h3>
-            {% for blocked_user in blocked_users %}
-                <form action="" method="post"
+            {% for blocked_user in user.user.all %}
+                <form action="{% url 'users:block_user' unblock=True %}" method="post"
                       class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                     {% csrf_token %}
                     <div>
                         {{ unblock_form.is_unblock_form }}
-                        <input type="text" name="{{ unblock_form.username.name }}"
-                               value="{{ blocked_user.username }}" readonly class="form-control"/>
+                        <p> {{ blocked_user.blocked_user.username }}</p>
+                        <input type="hidden" name="user_id"
+                               value="{{ blocked_user.blocked_user.id }}" readonly class="form-control"/>
                     </div>
                     <div>
                         <button class="btn btn-primary" type="submit">Débloquer</button>

@@ -25,5 +25,8 @@ urlpatterns = [
     path('signup/', users.views.signup, name='signup'),
     path('logout/', users.views.logout_user, name='logout'),
     path('following/', users.views.following, name='following'),
-    path('following/<unfollow>', users.views.following, name='following'),
+    path('following/follow/', users.views.follow_user, name='follow_user'),
+    path('following/follow/<unfollow>', users.views.follow_user, name='follow_user'),
+    path('following/block/', users.views.block_user, name='block_user'),
+    path('following/block/<unblock>/', users.views.block_user, name='block_user'),
 ]

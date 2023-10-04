@@ -63,27 +63,13 @@ class FollowUserForm(forms.Form):
 
 
 class BlockUserForm(forms.Form):
-    is_block_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
     username = forms.CharField(
         max_length=64,
         label='',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "nom d'utilisateur"})
     )
 
-
-class UnfollowUserForm(forms.Form):
-    is_unfollow_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-    username = forms.CharField(
-        label='',
-        max_length=64,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-
-
-class UnblockUserForm(forms.Form):
-    is_unblock_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-    username = forms.CharField(
-        label='',
-        max_length=64,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
+    def clean(self):
+        cleaned_data = super().clean()
+        if not User.objects.filter(username=cleaned_data["username"]).exists():
+            self.add_error("username", "cet utilisateur n'existe pas")

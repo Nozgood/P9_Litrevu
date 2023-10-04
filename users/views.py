@@ -31,7 +31,7 @@ def user_login(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('login')
+    return redirect('users:login')
 
 
 def signup(request):
@@ -48,7 +48,21 @@ def signup(request):
 
 
 @login_required
-def following(request, unfollow=False):
+def following(request):
+    follow_form = users.forms.FollowUserForm()
+    block_form = users.forms.BlockUserForm()
+    return render(
+        request,
+        template_name='following.html',
+        context={
+            'follow_form': follow_form,
+            'block_form': block_form,
+        }
+    )
+
+
+@login_required
+def follow_user(request, unfollow=False):
     user_to_follow_form = users.forms.FollowUserForm(
         request.POST if request.method == "POST" and not unfollow else None)
     if request.method == "POST":
@@ -68,96 +82,26 @@ def following(request, unfollow=False):
                 except:
                     user_to_follow_form.add_error("username", "vous suivez déjà cet utilisateur")
                 return redirect("users:following")
-    return render(
-        request,
-        template_name="following.html",
-        context={
-            'follow_form': user_to_follow_form,
-        },
-    )
+    return redirect('users:following')
 
 
 @login_required
-def follow_user(request, connected_user, user_to_follow_form):
-    try:
-        user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
-        if get_single_block_user(request, connected_user, user_to_follow.id) is not None:
-            return "vous ne pouvez pas suivre un utilisateur qui est bloqué"
-        UserFollows.objects.create(
-            followed_user=user_to_follow,
-            user_id=connected_user.id,
-        )
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-@login_required
-def block_user(request, connected_user, user_to_block_form):
-    try:
-        user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
-        if get_single_following_user(request, connected_user, user_to_block.id) is not None:
-            return "vous ne pouvez pas bloquer un utilisateur que vous suivez"
-        UserBlocked.objects.create(
-            blocked_user=user_to_block,
-            user_id=connected_user.id,
-        )
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-@login_required
-def unfollow_user(request, connected_user, user_to_unfollow_form):
-    try:
-        user_to_unfollow = User.objects.get(username=user_to_unfollow_form.cleaned_data["username"])
-        following_relation = UserFollows.objects.get(
-            followed_user=user_to_unfollow,
-            user_id=connected_user.id,
-        )
-        following_relation.delete()
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-@login_required
-def unblock_user(request, connected_user, user_to_unblock_form):
-    try:
-        user_to_unblock = User.objects.get(username=user_to_unblock_form.cleaned_data["username"])
-        blocked_relation = UserBlocked.objects.get(
-            blocked_user=user_to_unblock,
-            user_id=connected_user.id,
-        )
-        blocked_relation.delete()
-    except User.DoesNotExist:
-        return "cet utilisateur n'existe pas"
-    return ""
-
-
-def get_single_following_user(request, connected_user, following_id):
-    following_relations = connected_user.following.all()
-    for relation in following_relations:
-        if relation.followed_user.id == following_id:
-            return relation.followed_user
-    return None
-
-
-def get_single_block_user(request, connected_user, blocking_id):
-    blocking_relations = connected_user.user.all()
-    for relation in blocking_relations:
-        if relation.blocked_user.id == blocking_id:
-            return relation.blocked_user
-    return None
-
-
-def get_followers(request, connected_user):
-    followers_relations = connected_user.followed_by.all()
-    followers = [relation.user for relation in followers_relations]
-    return followers
-
-
-def get_blocked_users(request, connected_user):
-    blocked_relations = connected_user.user.all()
-    blocked_users = [relation.blocked_user for relation in blocked_relations]
-    return blocked_users
+def block_user(request, unblock=False):
+    user_to_block_form = users.forms.BlockUserForm(
+        request.POST if request.method == "POST" and not unblock else None)
+    if request.method == "POST":
+        if unblock:
+            try:
+                UserBlocked.objects.get(user=request.user, blocked_user=request.POST.get("user_id")).delete()
+                return redirect("users:following")
+            except UserBlocked.DoesNotExist:
+                pass
+        else:
+            if user_to_block_form.is_valid():
+                try:
+                    UserBlocked.objects.create(user=request.user, blocked_user=User.objects.get(
+                        username=user_to_block_form.cleaned_data["username"]))
+                except:
+                    user_to_block_form.add_error("username", "vous bloquez déjà cet utilisateur")
+                return redirect("users:following")
+    return redirect('users:following')
