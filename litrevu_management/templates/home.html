@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <section class="container d-flex justify-content-center gap-4 align-items-center mb-2 mt-2">
-        <a class="btn btn-primary" href="{% url 'create_review' %}">Créer une critique</a>
-        <a class="btn btn-primary" href="{% url 'create_ticket' %}">Demander une critique</a>
+        <a class="btn btn-primary" href="{% url 'litrevu:create_review' %}">Créer une critique</a>
+        <a class="btn btn-primary" href="{% url 'litrevu:create_ticket' %}">Demander une critique</a>
     </section>
 {% endblock content %}

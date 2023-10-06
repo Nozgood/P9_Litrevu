@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,9 +121,12 @@ AUTH_USER_MODEL = "users.User"
 
 # LOGIN_URL option permet d'indiquer au decorateur login_required vers quel page il doit rediriger lorsque le user
 # n'est pas connecté
-LOGIN_URL = 'login'
+LOGIN_URL = 'users:login'
 
 # LOGIN_REDIRECT_URL indique aux vues génériques (loginview) vers quel url je dois rediriger lorsque la connexion à
 # réussi
-LOGIN_REDIRECT_URL = 'home'
-FOLLOWING_SYSTEM_REDIRECT_URL = 'following'
+LOGIN_REDIRECT_URL = 'litrevu:home'
+
+# Images uploading managing system
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')

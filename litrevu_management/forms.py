@@ -1,7 +1,12 @@
 from django import forms
+from litrevu_management.models import Ticket
 
 
-class TicketForm(forms.Form):
-    title = forms.CharField(max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    description = forms.CharField(max_length=2048, widget=forms.TextInput(attrs={"class": "form-control"}))
-    image = forms.ImageField
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['title', 'description', 'image']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }

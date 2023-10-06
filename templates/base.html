@@ -18,7 +18,7 @@
         {% if user.is_authenticated %}
             <div class="container-fluid">
                 <div class="mx-auto">
-                    <a class="navbar-brand" href="{% url 'home' %}">LITREVIEW</a>
+                    <a class="navbar-brand" href="{% url 'litrevu:home' %}">LITREVIEW</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +27,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Flux</a>
+                            <a class="nav-link" href="{% url 'litrevu:home' %}">Flux</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'posts' %}">Posts</a>
+                            <a class="nav-link" href="{% url 'litrevu:posts' %}">Posts</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:following' %}">Abonnements</a>

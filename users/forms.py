@@ -13,6 +13,7 @@ class SignupForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].label = "Email"
+        self.fields["email"].required = True
         self.fields["password1"].label = "Mot de passe"
         self.fields["password2"].label = 'Confirmer mot de passe'
         self.fields["username"].help_text = USERNAME_VALIDATION_TEXT

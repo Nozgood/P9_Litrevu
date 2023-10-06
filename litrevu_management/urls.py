@@ -14,15 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from users import urls as users_urls
-from litrevu_management import urls as litrevu_urls
-from django.conf import settings
-from django.conf.urls.static import static
+
+from django.urls import path
+import litrevu_management.views as views
+
+app_name = "litrevu"
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
-                  path('users/', include(users_urls)),
-                  path('litrevu/', include(litrevu_urls))
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('', views.home, name='home'),
+    path('review/ticket/create/', views.create_ticket, name='create_ticket'),
+    path('review/create/', views.create_review, name='create_review'),  # créer une critique
+    path('posts/', views.posts, name='posts')
+]
