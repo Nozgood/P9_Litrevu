@@ -28,9 +28,9 @@ def posts(request):
 
 @login_required
 def create_ticket(request):
-    ticket_form = forms.TicketForm()
+    ticket_form = forms.TicketForm(request.POST if request.method == "POST" else None,
+                                   request.FILES if request.method == "POST" else None)
     if request.method == "POST":
-        ticket_form = forms.TicketForm(request.POST, request.FILES)
         ticket = ticket_form.save(commit=False)
         ticket.user = request.user
         ticket.save()

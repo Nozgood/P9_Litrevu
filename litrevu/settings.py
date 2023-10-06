@@ -129,4 +129,4 @@ LOGIN_REDIRECT_URL = 'litrevu:home'
 
 # Images uploading managing system
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

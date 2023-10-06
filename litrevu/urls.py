@@ -22,7 +22,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
-                  path('users/', include(users_urls)),
-                  path('litrevu/', include(litrevu_urls))
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('admin/', admin.site.urls),
+    path('users/', include(users_urls)),
+    path('litrevu/', include(litrevu_urls))
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
