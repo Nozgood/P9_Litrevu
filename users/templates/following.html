@@ -38,9 +38,9 @@
         </div>
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnés </h3>
-            {% for followed_by_user in followers %}
+            {% for follower in followers %}
                 <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
-                    {{ followed_by_user.username }}
+                    {{ follower.username }}
                 </div>
             {% endfor %}
         </div>

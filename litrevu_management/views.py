@@ -6,6 +6,8 @@ from litrevu_management.models import Ticket, Review
 
 @login_required
 def home(request):
+    all_personal_tickets = Ticket.objects.filter(user=request.user)
+    all_personal_reviews = Review.objects.filter(user=request.user)
     return render(
         request,
         'home.html',

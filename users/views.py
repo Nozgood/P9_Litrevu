@@ -51,12 +51,18 @@ def signup(request):
 def following(request):
     follow_form = users.forms.FollowUserForm()
     block_form = users.forms.BlockUserForm()
+    followers_relation = UserFollows.objects.filter(followed_user=request.user.id)
+    followers_users = []
+    for follower in followers_relation:
+        follower_user = User.objects.get(id=follower.user_id)
+        followers_users.append(follower_user)
     return render(
         request,
         template_name='following.html',
         context={
             'follow_form': follow_form,
             'block_form': block_form,
+            'followers': followers_users,
         }
     )
 
