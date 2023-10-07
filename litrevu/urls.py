@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include(users_urls)),
-    path('litrevu/', include(litrevu_urls))
+    path('', include(litrevu_urls))
 ]
 
 if settings.DEBUG:

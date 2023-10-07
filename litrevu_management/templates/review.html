@@ -1,2 +1,16 @@
 {% extends 'base.html' %}
-{% block content %}{% endblock content %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form ticket_form layout='floating' %}
+        {% bootstrap_field review_form.headline layout='floating' %}
+        <div class="d-flex mb-3 gap-4">
+            {% for choice in review_form.rating %}
+                {{ choice }}
+            {% endfor %}
+        </div>
+        {% bootstrap_field review_form.body layout='floating' %}
+        {% bootstrap_button button_type='submit' content='Soumettre' %}
+    </form>
+{% endblock content %}
