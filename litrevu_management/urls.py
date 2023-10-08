@@ -23,6 +23,11 @@ app_name = "litrevu"
 urlpatterns = [
     path('', views.home, name='home'),
     path('review/ticket/create/', views.create_ticket, name='create_ticket'),
-    path('review/create/', views.create_review, name='create_review'),  # créer une critique
-    path('posts/', views.posts, name='posts')
+    path('review/ticket/update', views.update_ticket, name='update_ticket'),
+    path('review/ticket/delete/<int:ticket_id>', views.delete_ticket, name='delete_ticket'),
+    path('review/create/', views.create_review, name='create_review'),
+    path('review/update/', views.update_review, name='update_review'),
+    path('review/delete/<int:review_id>', views.delete_review, name='delete_review'),
+    path('posts/', views.posts, name='posts'),
+    path('404/', views.error_404, name='404')
 ]

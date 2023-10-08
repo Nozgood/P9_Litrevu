@@ -1,25 +1,61 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <h1 class="h1">POSTS</h1>
-    {% for ticket in tickets %}
-        <div>
-            {{ ticket.title }}
-            {{ ticket.time_created }}
-            {{ ticket.description }}
-            {% if ticket.image %}
-                <img src="{{ ticket.image.url }}" alt="image">
-            {% endif %}
+    <section class="d-flex flex-column align-items-center gap-4 mb-5">
+        <h2 class="h2">Vos posts</h2>
+        <div class="d-flex flex-column gap-4 align-items-center">
+            <h3 class="h3">Vos tickets</h3>
+            {% for ticket in tickets %}
+                <div class="card" style="width: 18rem">
+                    {% if ticket.image %}
+                        <img class="card-img-top img-fluid" src="{{ ticket.image.url }}" alt="image du ticket">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ ticket.title }}</h5>
+                        <p class="card-text"> {{ ticket.description }} </p>
+                    </div>
+                    <div class="card-footer">
+                        <p class="text-muted">
+                            {{ ticket.time_created }}
+                        </p>
+                        <a class="btn btn-primary" href="{% url 'litrevu:update_ticket' %}">Modifier</a>
+                        <form action="{% url 'litrevu:delete_ticket' ticket_id=ticket.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    {% for review in reviews %}
-        <div>
-            {{ review.headline }}
-            {{ review.rating }}
-            {{ review.body }}
-            {% if review.ticket.image %}
-                <img src={{ review.ticket.image.url }} alt="image">
-            {% endif %}
+        <div class="d-flex flex-column gap-4 align-items-center">
+            <h3 class="h3">Vos critiques</h3>
+            {% for review in reviews %}
+                <div class="card" style="width: 18rem">
+                    {% if review.ticket.image %}
+                        <img class="card-img-top img-fluid" src="{{ review.ticket.image.url }}"
+                             alt=" image de la critique">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.headline }}</h5>
+                        {% for i in '01234'|make_list %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <p class="card-text">{{ review.body }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <p class="text-muted">
+                            {{ review.time_created }}
+                        </p>
+                        <a class="btn btn-primary" href="{% url 'litrevu:update_review' %}">Modifier</a>
+                        <a class="btn btn-danger"
+                           href="{% url 'litrevu:delete_review' review_id=review.id %}">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+    </section>
 {% endblock content %}
