@@ -12,5 +12,6 @@
         </div>
         {% bootstrap_field review_form.body layout='floating' %}
         {% bootstrap_button button_type='submit' content='Soumettre' %}
+        <a class="btn btn-danger" href="{% url 'litrevu:home' %}">Annuler</a>
     </form>
 {% endblock content %}

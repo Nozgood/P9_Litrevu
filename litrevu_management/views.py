@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from litrevu_management import forms
 from litrevu_management.models import Ticket, Review
 
@@ -47,17 +48,26 @@ def create_ticket(request):
 
 
 @login_required
-def update_ticket(request):
-    return render(request)
+def update_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    edit_ticket = forms.TicketForm(instance=ticket)
+    return render(
+        request,
+        template_name='update_ticket.html',
+        context={
+            'edit_ticket_form': edit_ticket,
+        }
+    )
 
 
 @login_required
 def delete_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    if request.user == ticket.user:
-        ticket.delete()
-        return redirect('litrevu:posts')
-    return redirect('lirevu:404')
+    if request.user != ticket.user:
+        raise PermissionDenied
+
+    ticket.delete()
+    return redirect('litrevu:posts')
 
 
 @login_required
@@ -92,11 +102,8 @@ def update_review(request):
 
 @login_required
 def delete_review(request, review_id):
-    return render(request)
-
-
-def error_404(request):
-    return render(
-        request,
-        template_name='litrevu_404.html',
-    )
+    review = get_object_or_404(Review, id=review_id)
+    if request.user != review.user:
+        raise PermissionDenied
+    review.delete()
+    return redirect('litrevu:posts')

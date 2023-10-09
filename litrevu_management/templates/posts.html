@@ -18,7 +18,8 @@
                         <p class="text-muted">
                             {{ ticket.time_created }}
                         </p>
-                        <a class="btn btn-primary" href="{% url 'litrevu:update_ticket' %}">Modifier</a>
+                        <a class="btn btn-primary"
+                           href="{% url 'litrevu:update_ticket' ticket_id=ticket.id %}">Modifier</a>
                         <form action="{% url 'litrevu:delete_ticket' ticket_id=ticket.id %}" method="post">
                             {% csrf_token %}
                             <button class="btn btn-danger" type="submit">Supprimer</button>
@@ -50,9 +51,12 @@
                         <p class="text-muted">
                             {{ review.time_created }}
                         </p>
-                        <a class="btn btn-primary" href="{% url 'litrevu:update_review' %}">Modifier</a>
-                        <a class="btn btn-danger"
-                           href="{% url 'litrevu:delete_review' review_id=review.id %}">Supprimer</a>
+                        <a class="btn btn-primary"
+                           href="{% url 'litrevu:update_review' review_id=review.id %}">Modifier</a>
+                        <form action="{% url 'litrevu:delete_review' review_id=review.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit">Supprimer</button>
+                        </form>
                     </div>
                 </div>
             {% endfor %}

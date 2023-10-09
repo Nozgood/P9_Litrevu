@@ -8,6 +8,11 @@ class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['title', 'description', 'image']
+        labels = {
+            'title': 'Titre',
+            'description': 'Description',
+            'image': 'Image',
+        }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.TextInput(attrs={'class': 'form-control'}),
