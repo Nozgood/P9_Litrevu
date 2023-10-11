@@ -50,12 +50,20 @@ def create_ticket(request):
 @login_required
 def update_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.user != ticket.user:
+        raise PermissionDenied
     edit_ticket = forms.TicketForm(instance=ticket)
+    if request.method == "POST":
+        edit_ticket = forms.TicketForm(request.POST, request.FILES, instance=ticket)
+        if edit_ticket.is_valid():
+            edit_ticket.save()
+            return redirect('litrevu:home')
     return render(
         request,
         template_name='update_ticket.html',
         context={
             'edit_ticket_form': edit_ticket,
+            'ticket': ticket,
         }
     )
 
@@ -96,8 +104,24 @@ def create_review(request):
 
 
 @login_required
-def update_review(request):
-    return render(request)
+def update_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    if request.user != review.user:
+        raise PermissionDenied
+    update_review_form = forms.ReviewForm(instance=review)
+    if request.method == "POST":
+        update_review_form = forms.ReviewForm(request.POST, instance=review)
+        if update_review_form.is_valid():
+            update_review_form.save()
+            return redirect('litrevu:posts')
+    return render(
+        request,
+        template_name='update_review.html',
+        context={
+            'update_review_form': update_review_form,
+            'review': review,
+        }
+    )
 
 
 @login_required
