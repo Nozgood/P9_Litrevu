@@ -3,15 +3,28 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from litrevu_management import forms
 from litrevu_management.models import Ticket, Review
+from users.models import UserFollows
 
 
 @login_required
 def home(request):
-    all_personal_tickets = Ticket.objects.filter(user=request.user)
-    all_personal_reviews = Review.objects.filter(user=request.user)
+    items_to_display = []
+    following_relations = UserFollows.objects.filter(user=request.user)
+    for following in following_relations:
+        items_to_display.extend(Ticket.objects.filter(user=following.followed_user))
+        items_to_display.extend(Review.objects.filter(user=following.followed_user))
+    personal_tickets = Ticket.objects.filter(user=request.user)
+    personal_reviews = Review.objects.filter(user=request.user)
+    items_to_display.extend(personal_tickets)
+    items_to_display.extend(personal_reviews)
+
+    sorted_items = sorted(items_to_display, key=lambda item: item.time_created, reverse=True)
     return render(
         request,
         'home.html',
+        context={
+            "items": sorted_items
+        }
     )
 
 
