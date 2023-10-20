@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 import users.forms
@@ -86,7 +87,7 @@ def follow_user(request, unfollow=False):
                         user=request.user,
                     )
                 except:
-                    user_to_follow_form.add_error("username", "vous suivez déjà cet utilisateur")
+                    messages.error(request, "vous suivez déjà cet utilisateur")
                 return redirect("users:following")
     return redirect('users:following')
 

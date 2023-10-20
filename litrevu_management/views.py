@@ -14,6 +14,9 @@ def home(request):
         items_to_display.extend(Ticket.objects.filter(user=following.followed_user))
         items_to_display.extend(Review.objects.filter(user=following.followed_user))
     personal_tickets = Ticket.objects.filter(user=request.user)
+    for personal_ticket in personal_tickets:
+        review_associated = personal_ticket.review_set.all()
+        items_to_display.extend(review_associated)
     personal_reviews = Review.objects.filter(user=request.user)
     items_to_display.extend(personal_tickets)
     items_to_display.extend(personal_reviews)
@@ -30,32 +33,28 @@ def home(request):
 
 @login_required
 def posts(request):
-    all_tickets = Ticket.objects.filter(user=request.user)
-    all_reviews = Review.objects.filter(user=request.user)
+    items_to_display = []
+    items_to_display.extend(Ticket.objects.filter(user=request.user))
+    items_to_display.extend(Review.objects.filter(user=request.user))
+    sorted_items = sorted(items_to_display, key=lambda item: item.time_created, reverse=True)
     return render(
         request,
         'posts.html',
         context={
-            'tickets': all_tickets,
-            'reviews': all_reviews,
+            'items': sorted_items,
         }
     )
 
 
 @login_required
-def create_ticket(request, ticket_id=None):
-    try:
-        ticket = Ticket.objects.get(pk=ticket_id)
-    except Ticket.DoesNotExist:
-        ticket = None
+def create_ticket(request):
     ticket_form = forms.TicketForm(request.POST if request.method == "POST" else None,
-                                   request.FILES if request.method == "POST" else None,
-                                   instance=ticket if ticket else None)
+                                   request.FILES if request.method == "POST" else None)
     if request.method == "POST" and ticket_form.is_valid():
         ticket = ticket_form.save(commit=False)
         ticket.user = request.user
         ticket.save()
-        return redirect('litrevu:home')
+        return redirect('litrevu:posts')
     return render(
         request,
         'ticket.html',
@@ -114,7 +113,27 @@ def create_review(request):
         context={
             "ticket_form": ticket_form,
             "review_form": review_form,
-            "range": range,
+        }
+    )
+
+
+@login_required
+def create_review_from_ticket(request, ticket_id):
+    ticket = Ticket.objects.get(pk=ticket_id)
+    print(f'ticket: {ticket.title}')
+    review_form = forms.ReviewForm(request.POST if request.method == "POST" else None)
+    if request.method == "POST" and review_form.is_valid():
+        review = review_form.save(commit=False)
+        review.ticket = ticket
+        review.user = request.user
+        review.save()
+        return redirect('litrevu:home')
+    return render(
+        request,
+        template_name='review_from_ticket.html',
+        context={
+            'ticket': ticket,
+            'review_form': review_form,
         }
     )
 

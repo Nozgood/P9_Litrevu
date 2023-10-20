@@ -1,65 +1,35 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load custom_filters %}
 {% block content %}
     <section class="d-flex flex-column align-items-center gap-4 mb-5">
-        <h2 class="h2">Vos posts</h2>
-        <div class="d-flex flex-column gap-4 align-items-center">
-            <h3 class="h3">Vos tickets</h3>
-            <div class="row">
-                {% for ticket in tickets %}
-                    <div class="card col-md-6 offset-md-3">
-                        {% if ticket.image %}
-                            <img class="card-img-top img-fluid" src="{{ ticket.image.url }}" alt="image du ticket">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ ticket.title }}</h5>
-                            <p class="card-text"> {{ ticket.description }} </p>
-                        </div>
-                        <div class="card-footer">
-                            <p class="text-muted">
-                                {{ ticket.time_created }}
-                            </p>
-                            <div class="d-flex gap-3 justify-content-between">
-                                <a class="btn btn-primary"
-                                   href="{% url 'litrevu:update_ticket' ticket_id=ticket.id %}">Modifier</a>
-                                <form action="{% url 'litrevu:delete_ticket' ticket_id=ticket.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn btn-danger" type="submit">Supprimer</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="d-flex flex-column gap-4 align-items-center">
-            <h3 class="h3">Vos critiques</h3>
-            {% for review in reviews %}
+        {% for item in items %}
+            {% if item|hasattr:'rating' %}
                 <div class="card" style="width: 18rem">
                     <div class="card-body">
-                        <h5 class="card-title">{{ review.headline }}</h5>
+                        <h5 class="card-title">{{ item.headline }}</h5>
                         {% for i in '01234'|make_list %}
-                            {% if forloop.counter <= review.rating %}
+                            {% if forloop.counter <= item.rating %}
                                 <i class="fas fa-star"></i>
                             {% else %}
                                 <i class="far fa-star"></i>
                             {% endif %}
                         {% endfor %}
-                        <p class="card-text">{{ review.body }}</p>
+                        <p class="card-text">{{ item.body }}</p>
                     </div>
                     <div class="card-body border-top  border-light-subtle">
                         <div class="d-flex">
-                            <p class="card-title">{{ review.ticket.title }} &nbsp;</p>
+                            <p class="card-title">{{ item.ticket.title }} &nbsp;</p>
                             {% if review.ticket.user.username == request.user.username %}
                                 <p class="card-text">- Vous</p>
                             {% else %}
-                                <p class="card-text">{{ review.ticket.user.username }}</p>
+                                <p class="card-text">{{ item.ticket.user.username }}</p>
                             {% endif %}
                         </div>
-                        <p class="text-muted">{{ review.ticket.time_created }}</p>
-                        <p class="card-text">{{ review.ticket.description }}</p>
-                        {% if review.ticket.image %}
-                            <img class="card-img-top img-fluid" src="{{ review.ticket.image.url }}"
+                        <p class="text-muted">{{ item.ticket.time_created }}</p>
+                        <p class="card-text">{{ item.ticket.description }}</p>
+                        {% if item.ticket.image %}
+                            <img class="card-img-top img-fluid" src="{{ item.ticket.image.url }}"
                                  alt=" image de la critique">
                         {% endif %}
                     </div>
@@ -69,15 +39,38 @@
                         </p>
                         <div class="d-flex gap-4 justify-content-between">
                             <a class="btn btn-primary"
-                               href="{% url 'litrevu:update_review' review_id=review.id %}">Modifier</a>
-                            <form action="{% url 'litrevu:delete_review' review_id=review.id %}" method="post">
+                               href="{% url 'litrevu:update_review' review_id=item.id %}">Modifier</a>
+                            <form action="{% url 'litrevu:delete_review' review_id=item.id %}" method="post">
                                 {% csrf_token %}
                                 <button class="btn btn-danger" type="submit">Supprimer</button>
                             </form>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            {% else %}
+                <div class="card col-md-6 offset-md-3">
+                    {% if item.image %}
+                        <img class="card-img-top img-fluid" src="{{ item.image.url }}" alt="image du ticket">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        <p class="card-text"> {{ item.description }} </p>
+                    </div>
+                    <div class="card-footer">
+                        <p class="text-muted">
+                            {{ item.time_created }}
+                        </p>
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a class="btn btn-primary"
+                               href="{% url 'litrevu:update_ticket' ticket_id=item.id %}">Modifier</a>
+                            <form action="{% url 'litrevu:delete_ticket' ticket_id=item.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
     </section>
 {% endblock content %}

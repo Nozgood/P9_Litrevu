@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="card col-md-6 offset-md-3">
+        {% if ticket.image %}
+            <img class="card-img-top img-fluid" src="{{ ticket.image.url }}" alt="image du ticket">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ ticket.title }}</h5>
+            <p class="card-text"> {{ ticket.description }} </p>
+        </div>
+        <div class="card-footer">
+            <p class="text-muted">
+                {{ ticket.time_created }}
+            </p>
+        </div>
+    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_field review_form.headline layout='floating' %}
+        <div class="d-flex mb-3 gap-4">
+            {% for choice in review_form.rating %}
+                {{ choice }}
+            {% endfor %}
+        </div>
+        {% bootstrap_field review_form.body layout='floating' %}
+        {% bootstrap_button button_type='submit' content='Soumettre' %}
+        <a class="btn btn-danger" href="{% url 'litrevu:home' %}">Annuler</a>
+    </form>
+{% endblock content %}
