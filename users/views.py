@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
@@ -82,12 +84,24 @@ def follow_user(request, unfollow=False):
         else:
             if user_to_follow_form.is_valid():
                 try:
+                    user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
+                    if user_to_follow == request.user:
+                        messages.error(
+                            request,
+                            message="Vous ne pouvez pas vous suivre vous-même.",
+                            extra_tags="follow_error")
+                        return redirect("users:following")
+
                     UserFollows.objects.create(
-                        followed_user=User.objects.get(username=user_to_follow_form.cleaned_data["username"]),
+                        followed_user=user_to_follow,
                         user=request.user,
                     )
-                except:
-                    messages.error(request, "vous suivez déjà cet utilisateur")
+                except User.DoesNotExist:
+                    messages.error(request, message="Utilisateur introuvable.", extra_tags="follow_error")
+                    return redirect("users:following")
+                except IntegrityError:
+                    messages.error(request, message="Vous suivez déjà cet utilisateur.", extra_tags="follow_error")
+                    return redirect("users:following")
                 return redirect("users:following")
     return redirect('users:following')
 
@@ -106,9 +120,19 @@ def block_user(request, unblock=False):
         else:
             if user_to_block_form.is_valid():
                 try:
-                    UserBlocked.objects.create(user=request.user, blocked_user=User.objects.get(
-                        username=user_to_block_form.cleaned_data["username"]))
-                except:
-                    user_to_block_form.add_error("username", "vous bloquez déjà cet utilisateur")
+                    user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
+                    if user_to_block == request.user:
+                        messages.error(
+                            request,
+                            message="Vous ne pouvez pas vous bloquer vous-même.",
+                            extra_tags="block_error")
+                        return redirect("users:following")
+                    UserBlocked.objects.create(user=request.user, blocked_user=user_to_block)
+                except User.DoesNotExist:
+                    messages.error(request, message="utilisateur introuvable.", extra_tags="block_error")
+                    return redirect("users:following")
+                except IntegrityError:
+                    messages.error(request, message="Vous bloquez déjà cet utilisateur.", extra_tags="block_error")
+                    return redirect("users:following")
                 return redirect("users:following")
     return redirect('users:following')

@@ -57,11 +57,6 @@ class FollowUserForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "nom d'utilisateur"})
     )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if not User.objects.filter(username=cleaned_data["username"]).exists():
-            self.add_error("username", "cet utilisateur n'existe pas")
-
 
 class BlockUserForm(forms.Form):
     username = forms.CharField(
@@ -69,8 +64,3 @@ class BlockUserForm(forms.Form):
         label='',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "nom d'utilisateur"})
     )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        if not User.objects.filter(username=cleaned_data["username"]).exists():
-            self.add_error("username", "cet utilisateur n'existe pas")

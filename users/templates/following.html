@@ -9,15 +9,15 @@
                   class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
                 {% csrf_token %}
                 {% bootstrap_form follow_form layout='inline' %}
-                {% if follow_form.username.errors %}
-                    <div class="errors">
-                        {% for error in follow_form.username.errors %}
-                            <div class="error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
                 <button class="btn btn-primary" type="submit">Suivre</button>
             </form>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == "follow_error error" %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
         <div class="container d-flex flex-column align-items-center mb-5">
             <h5 class="h5">Bloquer</h5>
@@ -27,6 +27,13 @@
                 {% bootstrap_form block_form layout='inline' %}
                 <button class="btn btn-primary" type="submit">Bloquer</button>
             </form>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == "block_error error" %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnements</h3>

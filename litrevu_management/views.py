@@ -120,7 +120,6 @@ def create_review(request):
 @login_required
 def create_review_from_ticket(request, ticket_id):
     ticket = Ticket.objects.get(pk=ticket_id)
-    print(f'ticket: {ticket.title}')
     review_form = forms.ReviewForm(request.POST if request.method == "POST" else None)
     if request.method == "POST" and review_form.is_valid():
         review = review_form.save(commit=False)
