@@ -129,9 +129,9 @@ def block_user(request, unblock=False):
         else:
             if user_to_block_form.is_valid():
                 try:
-                    is_user_followed = UserBlocked.objects.filter(
+                    is_user_followed = UserFollows.objects.filter(
                         user=request.user,
-                        blocked_user=User.objects.get(username=user_to_block_form.cleaned_data["username"]).id
+                        followed_user=User.objects.get(username=user_to_block_form.cleaned_data["username"]).id
                     )
                     if len(is_user_followed) > 0:
                         messages.error(
@@ -139,6 +139,7 @@ def block_user(request, unblock=False):
                             message="Veuillez vous désabonner de cet utilisateur avant de le bloquer.",
                             extra_tags="block_error",
                         )
+                        return redirect("users:following")
                 except User.DoesNotExist:
                     messages.error(
                         request,
