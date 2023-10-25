@@ -84,6 +84,18 @@ def follow_user(request, unfollow=False):
         else:
             if user_to_follow_form.is_valid():
                 try:
+                    is_user_blocked = UserBlocked.objects.filter(user=request.user, blocked_user=User.objects.get(
+                        username=user_to_follow_form.cleaned_data["username"]).id)
+                    if len(is_user_blocked) > 0:
+                        messages.error(
+                            request,
+                            message="Veuillez débloquer cet utilisateur pour le suivre.",
+                            extra_tags="follow_error")
+                        return redirect("users:following")
+                except User.DoesNotExist:
+                    messages.error(request, message="Utilisateur introuvable", extra_tags="follow_error")
+                    return redirect("users:following")
+                try:
                     user_to_follow = User.objects.get(username=user_to_follow_form.cleaned_data["username"])
                     if user_to_follow == request.user:
                         messages.error(
@@ -96,9 +108,6 @@ def follow_user(request, unfollow=False):
                         followed_user=user_to_follow,
                         user=request.user,
                     )
-                except User.DoesNotExist:
-                    messages.error(request, message="Utilisateur introuvable.", extra_tags="follow_error")
-                    return redirect("users:following")
                 except IntegrityError:
                     messages.error(request, message="Vous suivez déjà cet utilisateur.", extra_tags="follow_error")
                     return redirect("users:following")
@@ -120,6 +129,24 @@ def block_user(request, unblock=False):
         else:
             if user_to_block_form.is_valid():
                 try:
+                    is_user_followed = UserBlocked.objects.filter(
+                        user=request.user,
+                        blocked_user=User.objects.get(username=user_to_block_form.cleaned_data["username"]).id
+                    )
+                    if len(is_user_followed) > 0:
+                        messages.error(
+                            request,
+                            message="Veuillez vous désabonner de cet utilisateur avant de le bloquer.",
+                            extra_tags="block_error",
+                        )
+                except User.DoesNotExist:
+                    messages.error(
+                        request,
+                        message="Utilisateur introuvable",
+                        extra_tags="block_error",
+                    )
+                    return redirect("users:following")
+                try:
                     user_to_block = User.objects.get(username=user_to_block_form.cleaned_data["username"])
                     if user_to_block == request.user:
                         messages.error(
@@ -128,9 +155,6 @@ def block_user(request, unblock=False):
                             extra_tags="block_error")
                         return redirect("users:following")
                     UserBlocked.objects.create(user=request.user, blocked_user=user_to_block)
-                except User.DoesNotExist:
-                    messages.error(request, message="utilisateur introuvable.", extra_tags="block_error")
-                    return redirect("users:following")
                 except IntegrityError:
                     messages.error(request, message="Vous bloquez déjà cet utilisateur.", extra_tags="block_error")
                     return redirect("users:following")
