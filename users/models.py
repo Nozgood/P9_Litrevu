@@ -24,7 +24,9 @@ class UserFollows(models.Model):
     )
 
     class Meta:
-        unique_together = ('user', 'followed_user',)  # deprecated use constrains instead
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'followed_user'], name='unique_follow')
+        ]
 
 
 class UserBlocked(models.Model):
@@ -42,4 +44,6 @@ class UserBlocked(models.Model):
     )
 
     class Meta:
-        unique_together = ('user', 'blocked_user',)
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'blocked_user'], name='unique_block')
+        ]
