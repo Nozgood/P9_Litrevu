@@ -10,10 +10,10 @@
             <p class="alert alert-info">Il n'y a pas encore de post à afficher.</p>
         </section>
     {% else %}
-        <section>
+        <section class="container">
             {% for item in items %}
                 {% if item|hasattr:"rating" %}
-                    <div class="card" style="width: 18rem">
+                    <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title">{{ item.headline }}</h5>
                             {% for i in '01234'|make_list %}
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 {% else %}
-                    <div class="card col-md-6 offset-md-3">
+                    <div class="card mb-4">
                         {% if item.image %}
                             <img class="card-img-top img-fluid" src="{{ item.image.url }}" alt="image du ticket">
                         {% endif %}

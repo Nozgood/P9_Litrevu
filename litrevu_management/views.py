@@ -17,10 +17,7 @@ def home(request):
     for personal_ticket in personal_tickets:
         review_associated = personal_ticket.review_set.all()
         items_to_display.extend(review_associated)
-    personal_reviews = Review.objects.filter(user=request.user)
     items_to_display.extend(personal_tickets)
-    items_to_display.extend(personal_reviews)
-
     sorted_items = sorted(items_to_display, key=lambda item: item.time_created, reverse=True)
     return render(
         request,

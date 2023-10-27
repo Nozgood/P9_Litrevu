@@ -7,10 +7,10 @@
             <p class="alert alert-info">Il n'y a pas encore de post à afficher.</p>
         </section>
     {% else %}
-        <section class="d-flex flex-column align-items-center gap-4 mb-5">
+        <section class="container mb-4 mt-4">
             {% for item in items %}
                 {% if item|hasattr:'rating' %}
-                    <div class="card" style="width: 18rem">
+                    <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title">{{ item.headline }}</h5>
                             {% for i in '01234'|make_list %}
@@ -22,7 +22,7 @@
                             {% endfor %}
                             <p class="card-text">{{ item.body }}</p>
                         </div>
-                        <div class="card-body border-top  border-light-subtle">
+                        <div class="card-body border-top border-light-subtle">
                             <div class="d-flex">
                                 <p class="card-title">{{ item.ticket.title }} &nbsp;</p>
                                 {% if review.ticket.user.username == request.user.username %}
@@ -42,7 +42,7 @@
                             <p class="text-muted">
                                 {{ review.time_created }}
                             </p>
-                            <div class="d-flex gap-4 justify-content-between">
+                            <div class="d-flex gap-4 justify-content-end">
                                 <a class="btn btn-primary"
                                    href="{% url 'litrevu:update_review' review_id=item.id %}">Modifier</a>
                                 <form action="{% url 'litrevu:delete_review' review_id=item.id %}" method="post">
@@ -53,19 +53,20 @@
                         </div>
                     </div>
                 {% else %}
-                    <div class="card col-md-6 offset-md-3">
-                        {% if item.image %}
-                            <img class="card-img-top img-fluid" src="{{ item.image.url }}" alt="image du ticket">
-                        {% endif %}
+                    <div class="card mb-4">
                         <div class="card-body">
+                            <div class="mb-2">
+                                <p class="card-text text-muted">Vous avez publié un ticket
+                                    - {{ item.time_created }} </p>
+                            </div>
                             <h5 class="card-title">{{ item.title }}</h5>
-                            <p class="card-text"> {{ item.description }} </p>
                         </div>
+                        {% if item.image %}
+                            <img class="border card-img-top img-fluid" src="{{ item.image.url }}"
+                                 alt="image du ticket">
+                        {% endif %}
                         <div class="card-footer">
-                            <p class="text-muted">
-                                {{ item.time_created }}
-                            </p>
-                            <div class="d-flex gap-3 justify-content-between">
+                            <div class="d-flex gap-3 justify-content-end">
                                 <a class="btn btn-primary"
                                    href="{% url 'litrevu:update_ticket' ticket_id=item.id %}">Modifier</a>
                                 <form action="{% url 'litrevu:delete_ticket' ticket_id=item.id %}" method="post">
