@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <form action="" method="post" enctype="multipart/form-data">
+    <form class="px-4 py-4" action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form ticket_form layout='floating' %}
-        <button type="submit" class="btn btn-primary">Créer un ticket</button>
+        {% if is_updating %}
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Créer un ticket</button>
+        {% endif %}
         <a class="btn btn-danger" href="{% url 'litrevu:home' %}">Annuler</a>
     </form>
 {% endblock content %}

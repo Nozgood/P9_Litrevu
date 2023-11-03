@@ -44,9 +44,16 @@ def posts(request):
 
 
 @login_required
-def create_ticket(request):
+def create_ticket(request, ticket_id=None):
+    is_updating = ticket_id is not None
+    try:
+        ticket = Ticket.objects.get(id=ticket_id)
+    except Ticket.DoesNotExist:
+        ticket = None
     ticket_form = forms.TicketForm(request.POST if request.method == "POST" else None,
-                                   request.FILES if request.method == "POST" else None)
+                                   request.FILES if request.method == "POST" else None,
+                                   instance=ticket if ticket else None,
+                                   )
     if request.method == "POST" and ticket_form.is_valid():
         ticket = ticket_form.save(commit=False)
         ticket.user = request.user
@@ -56,6 +63,7 @@ def create_ticket(request):
         request,
         'ticket.html',
         context={
+            "is_updating": is_updating,
             "ticket_form": ticket_form,
         },
     )
