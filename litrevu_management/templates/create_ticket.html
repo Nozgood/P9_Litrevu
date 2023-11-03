@@ -1,14 +1,49 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 {% block content %}
+    <div class="d-flex justify-content-center m-4">
+        {% if is_updating %}
+            <h2 class="h2">Modifier un ticket</h2>
+        {% else %}
+            <h2 class="h2">Créer un ticket</h2>
+        {% endif %}
+    </div>
     <form class="px-4 py-4" action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% bootstrap_form ticket_form layout='floating' %}
-        {% if is_updating %}
-            <button type="submit" class="btn btn-primary">Modifier</button>
-        {% else %}
-            <button type="submit" class="btn btn-primary">Créer un ticket</button>
-        {% endif %}
+        {% for field in ticket_form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% else %}
+                {% if field.name != 'image' %}
+                    {% bootstrap_field field layout='floating' %}
+                {% else %}
+                    {% if field.value %}
+                        <div class="form-group">
+                            <div>
+                                <img src="{{ field.value.url }}" class="img-thumbnail"
+                                     alt="Image actuelle"/>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="{{ field.name }}-clear">
+                                    Supprimer l'image actuelle
+                                </label>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% bootstrap_field field layout='floating' %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">
+            {% if is_updating %}Modifier{% else %}Créer{% endif %}
+        </button>
         <a class="btn btn-danger" href="{% url 'litrevu:home' %}">Annuler</a>
     </form>
 {% endblock content %}
+
+
+
+
+

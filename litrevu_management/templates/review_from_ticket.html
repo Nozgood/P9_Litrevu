@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 {% block content %}
+    <div class="d-flex m-4 flex-column align-items-center">
+        <h2 class="h2"> Créer une critique</h2>
+        <span>Vous postez une réponse à : </span>
+    </div>
     <div class="card col-md-6 offset-md-3">
         {% if ticket.image %}
             <img class="card-img-top img-fluid" src="{{ ticket.image.url }}" alt="image du ticket">
         {% endif %}
         <div class="card-body">
+            <span> Ticket de {{ ticket.user.username }}</span>
             <h5 class="card-title">{{ ticket.title }}</h5>
             <p class="card-text"> {{ ticket.description }} </p>
         </div>
@@ -15,10 +20,11 @@
             </p>
         </div>
     </div>
-    <form action="" method="post">
+    <form class="p-4" action="" method="post">
         {% csrf_token %}
         {% bootstrap_field review_form.headline layout='floating' %}
         <div class="d-flex mb-3 gap-4">
+            Note :
             {% for choice in review_form.rating %}
                 {{ choice }}
             {% endfor %}
