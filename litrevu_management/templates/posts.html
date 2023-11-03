@@ -2,6 +2,9 @@
 {% load django_bootstrap5 %}
 {% load custom_filters %}
 {% block content %}
+    <div class="d-flex justify-content-center mt-4">
+        <h1 class="h1">Vos posts</h1>
+    </div>
     {% if items|length == 0 %}
         <section>
             <p class="alert alert-info">Il n'y a pas encore de post à afficher.</p>
@@ -56,8 +59,14 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="mb-2">
-                                <p class="card-text text-muted">Vous avez publié un ticket
-                                    - {{ item.time_created }} </p>
+                                <div class="d-flex card-text text-muted justify-content-between">
+                                    <span>
+                                        Vous avez publié un ticket
+                                    </span>
+                                    <span>
+                                        {{ item.time_created }}
+                                    </span>
+                                </div>
                             </div>
                             <h5 class="card-title">{{ item.title }}</h5>
                         </div>

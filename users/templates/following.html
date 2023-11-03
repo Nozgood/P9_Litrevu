@@ -42,7 +42,7 @@
                       class="d-flex gap-4 align-items-baseline">
                     {% csrf_token %}
                     <p> {{ following_user.followed_user.username }}</p>
-                    <input type="hidden" name="user_id" value="{{ following_user.followed_user.id }}" readonly
+                    <input type="hidden" name="username" value="{{ following_user.followed_user.username }}" readonly
                            class="form-control"/>
                     <button class="btn btn-primary" type="submit">Se désabonner</button>
                 </form>
@@ -64,8 +64,8 @@
                     {% csrf_token %}
                     {{ unblock_form.is_unblock_form }}
                     <p> {{ blocked_user.blocked_user.username }}</p>
-                    <input type="hidden" name="user_id"
-                           value="{{ blocked_user.blocked_user.id }}" readonly class="form-control"/>
+                    <input type="hidden" name="username"
+                           value="{{ blocked_user.blocked_user.username }}" readonly class="form-control"/>
                     <button class="btn btn-primary" type="submit">Débloquer</button>
                 </form>
             {% endfor %}
