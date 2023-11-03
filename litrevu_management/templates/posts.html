@@ -13,78 +13,9 @@
         <section class="container mb-4 mt-4">
             {% for item in items %}
                 {% if item|hasattr:'rating' %}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.headline }}</h5>
-                            {% for i in '01234'|make_list %}
-                                {% if forloop.counter <= item.rating %}
-                                    <i class="fas fa-star"></i>
-                                {% else %}
-                                    <i class="far fa-star"></i>
-                                {% endif %}
-                            {% endfor %}
-                            <p class="card-text">{{ item.body }}</p>
-                        </div>
-                        <div class="card-body border-top border-light-subtle">
-                            <div class="d-flex">
-                                <p class="card-title">{{ item.ticket.title }} &nbsp;</p>
-                                {% if review.ticket.user.username == request.user.username %}
-                                    <p class="card-text">- Vous</p>
-                                {% else %}
-                                    <p class="card-text">{{ item.ticket.user.username }}</p>
-                                {% endif %}
-                            </div>
-                            <p class="text-muted">{{ item.ticket.time_created }}</p>
-                            <p class="card-text">{{ item.ticket.description }}</p>
-                            {% if item.ticket.image %}
-                                <img class="card-img-top img-fluid" src="{{ item.ticket.image.url }}"
-                                     alt=" image de la critique">
-                            {% endif %}
-                        </div>
-                        <div class="card-footer">
-                            <p class="text-muted">
-                                {{ review.time_created }}
-                            </p>
-                            <div class="d-flex gap-4 justify-content-end">
-                                <a class="btn btn-primary"
-                                   href="{% url 'litrevu:update_review' review_id=item.id %}">Modifier</a>
-                                <form action="{% url 'litrevu:delete_review' review_id=item.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn btn-danger" type="submit">Supprimer</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    {% include "review.html" with review=item personal_view=True %}
                 {% else %}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <div class="d-flex card-text text-muted justify-content-between">
-                                    <span>
-                                        Vous avez publié un ticket
-                                    </span>
-                                    <span>
-                                        {{ item.time_created }}
-                                    </span>
-                                </div>
-                            </div>
-                            <h5 class="card-title">{{ item.title }}</h5>
-                        </div>
-                        {% if item.image %}
-                            <img class="border card-img-top img-fluid" src="{{ item.image.url }}"
-                                 alt="image du ticket">
-                        {% endif %}
-                        <div class="card-footer">
-                            <div class="d-flex gap-3 justify-content-end">
-                                <a class="btn btn-primary"
-                                   href="{% url 'litrevu:update_ticket' ticket_id=item.id %}">Modifier</a>
-                                <form action="{% url 'litrevu:delete_ticket' ticket_id=item.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn btn-danger" type="submit">Supprimer</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    {% include "ticket.html" with ticket=item personal_view=True %}
                 {% endif %}
             {% endfor %}
         </section>

@@ -1,17 +1,48 @@
-{% extends 'base.html' %}
-{% load django_bootstrap5 %}
-{% block content %}
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% bootstrap_form ticket_form layout='floating' %}
-        {% bootstrap_field review_form.headline layout='floating' %}
-        <div class="d-flex mb-3 gap-4">
-            {% for choice in review_form.rating %}
-                {{ choice }}
-            {% endfor %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ review.headline }}</h5>
+        {% for i in '01234'|make_list %}
+            {% if forloop.counter <= review.rating %}
+                <i class="fas fa-star"></i>
+            {% else %}
+                <i class="far fa-star"></i>
+            {% endif %}
+        {% endfor %}
+        <p class="card-text">{{ review.body }}</p>
+    </div>
+    <div class="card-body border-top border-light-subtle">
+        <div class="d-flex">
+            <p class="card-title">{{ review.ticket.title }} &nbsp;</p>
+            {% if review.ticket.user.username == request.user.username %}
+                <p class="card-text">- Vous</p>
+            {% else %}
+                <p class="card-text">{{ review.ticket.user.username }}</p>
+            {% endif %}
         </div>
-        {% bootstrap_field review_form.body layout='floating' %}
-        {% bootstrap_button button_type='submit' content='Soumettre' %}
-        <a class="btn btn-danger" href="{% url 'litrevu:home' %}">Annuler</a>
-    </form>
-{% endblock content %}
+        <p class="text-muted">{{ review.ticket.time_created }}</p>
+        <p class="card-text">{{ review.ticket.description }}</p>
+        {% if review.ticket.image %}
+            <img class="card-img-top img-fluid" src="{{ review.ticket.image.url }}"
+                 alt=" image de la critique">
+        {% endif %}
+        {% if not personal_view %}
+            <a class="btn btn-primary"
+               href="{% url 'litrevu:create_review_from_ticket' ticket_id=item.ticket.id %}">Créer une critique</a>
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        <p class="text-muted">
+            {{ review.time_created }}
+        </p>
+        {% if personal_view %}
+            <div class="d-flex gap-4 justify-content-end">
+                <a class="btn btn-primary"
+                   href="{% url 'litrevu:update_review' review_id=review.id %}">Modifier</a>
+                <form action="{% url 'litrevu:delete_review' review_id=review.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Supprimer</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>

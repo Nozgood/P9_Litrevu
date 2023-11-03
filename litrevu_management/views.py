@@ -61,7 +61,7 @@ def create_ticket(request, ticket_id=None):
         return redirect('litrevu:posts')
     return render(
         request,
-        'ticket.html',
+        'create_ticket.html',
         context={
             "is_updating": is_updating,
             "ticket_form": ticket_form,
@@ -114,7 +114,7 @@ def create_review(request):
         return redirect('litrevu:home')
     return render(
         request,
-        'review.html',
+        'create_review.html',
         context={
             "ticket_form": ticket_form,
             "review_form": review_form,

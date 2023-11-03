@@ -13,63 +13,9 @@
         <section class="container">
             {% for item in items %}
                 {% if item|hasattr:"rating" %}
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.headline }}</h5>
-                            {% for i in '01234'|make_list %}
-                                {% if forloop.counter <= item.rating %}
-                                    <i class="fas fa-star"></i>
-                                {% else %}
-                                    <i class="far fa-star"></i>
-                                {% endif %}
-                            {% endfor %}
-                            <p class="card-text">{{ item.body }}</p>
-                        </div>
-                        <div class="card-body border-top  border-light-subtle">
-                            <div class="d-flex">
-                                <p class="card-title">{{ item.ticket.title }} &nbsp;</p>
-                                {% if review.ticket.user.username == request.user.username %}
-                                    <p class="card-text">- Vous</p>
-                                {% else %}
-                                    <p class="card-text">{{ item.ticket.user.username }}</p>
-                                {% endif %}
-                            </div>
-                            <p class="text-muted">{{ item.ticket.time_created }}</p>
-                            <p class="card-text">{{ item.ticket.description }}</p>
-                            {% if item.ticket.image %}
-                                <img class="card-img-top img-fluid" src="{{ item.ticket.image.url }}"
-                                     alt=" image de la critique">
-                            {% endif %}
-                            <a class="btn btn-primary"
-                               href="{% url 'litrevu:create_review_from_ticket' ticket_id=item.ticket.id %}">Créer une
-                                critique</a>
-                        </div>
-                        <div class="card-footer">
-                            <p class="text-muted">
-                                {{ review.time_created }}
-                            </p>
-                        </div>
-                    </div>
+                    {% include "review.html" with review=item personal_view=False %}
                 {% else %}
-                    <div class="card mb-4">
-                        {% if item.image %}
-                            <img class="card-img-top img-fluid" src="{{ item.image.url }}" alt="image du ticket">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.title }}</h5>
-                            <p class="card-text"> {{ item.description }} </p>
-                        </div>
-                        <div class="card-footer">
-                            <p class="text-muted">
-                                {{ item.time_created }}
-                            </p>
-                        </div>
-                        {% if not item|has_review %}
-                            <a class="btn btn-primary"
-                               href="{% url 'litrevu:create_review_from_ticket' ticket_id=item.id %}">Créer une
-                                critique</a>
-                        {% endif %}
-                    </div>
+                    {% include "ticket.html" with ticket=item personal_view=False %}
                 {% endif %}
             {% endfor %}
         </section>
