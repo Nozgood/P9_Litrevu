@@ -1,2 +1,5 @@
 env
 .idea
+db.sqlite3
+litrevu/__pycache__/
+litrevu_management/__pycache__/
