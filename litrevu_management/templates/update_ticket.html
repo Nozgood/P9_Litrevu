@@ -6,7 +6,8 @@
         {% bootstrap_form edit_ticket_form layout='floating' %}
         {% if ticket.image %}
             <div style="width: 200px; height: 200px;">
-                <img class="w-100" src="{{ ticket.image.url }}" alt="image du ticket">
+                <img class="w-100" src="{{ ticket.image.url }}"
+                     alt="image du ticket">
             </div>
         {% endif %}
         <button class="btn btn-primary" type="submit">Modifier</button>

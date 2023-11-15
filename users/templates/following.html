@@ -38,13 +38,18 @@
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3"> Abonnements</h3>
             {% for following_user in user.following.all %}
-                <form action="{% url 'users:follow_user' unfollow=True %}" method="post"
+                <form action="{% url 'users:follow_user' unfollow=True %}"
+                      method="post"
                       class="d-flex gap-4 align-items-baseline">
                     {% csrf_token %}
                     <p> {{ following_user.followed_user.username }}</p>
-                    <input type="hidden" name="username" value="{{ following_user.followed_user.username }}" readonly
+                    <input type="hidden" name="username"
+                           value="{{ following_user.followed_user.username }}"
+                           readonly
                            class="form-control"/>
-                    <button class="btn btn-primary" type="submit">Se désabonner</button>
+                    <button class="btn btn-primary" type="submit">Se
+                        désabonner
+                    </button>
                 </form>
             {% endfor %}
         </div>
@@ -59,14 +64,17 @@
         <div class="container d-flex flex-column align-items-center gap-2 mb-5">
             <h3 class="h3">Bloqués</h3>
             {% for blocked_user in user.user.all %}
-                <form action="{% url 'users:block_user' unblock=True %}" method="post"
+                <form action="{% url 'users:block_user' unblock=True %}"
+                      method="post"
                       class="d-flex gap-4 align-items-baseline">
                     {% csrf_token %}
                     {{ unblock_form.is_unblock_form }}
                     <p> {{ blocked_user.blocked_user.username }}</p>
                     <input type="hidden" name="username"
-                           value="{{ blocked_user.blocked_user.username }}" readonly class="form-control"/>
-                    <button class="btn btn-primary" type="submit">Débloquer</button>
+                           value="{{ blocked_user.blocked_user.username }}"
+                           readonly class="form-control"/>
+                    <button class="btn btn-primary" type="submit">Débloquer
+                    </button>
                 </form>
             {% endfor %}
         </div>

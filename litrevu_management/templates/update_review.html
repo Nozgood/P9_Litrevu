@@ -3,7 +3,8 @@
 {% block content %}
     <div class="card" style="width: 18rem">
         {% if review.ticket.image %}
-            <img class="card-img-top img-fluid" src="{{ review.ticket.image.url }}" alt="image du ticket">
+            <img class="card-img-top img-fluid"
+                 src="{{ review.ticket.image.url }}" alt="image du ticket">
         {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ review.ticket.title }}</h5>

@@ -4,6 +4,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Ticket(models.Model):
+    """
+    Ticket represents a ticket in our application
+    """
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048, blank=True)
     image = models.ImageField(null=True, blank=True, upload_to="images/")
@@ -15,6 +18,9 @@ class Ticket(models.Model):
 
 
 class Review(models.Model):
+    """
+    Review represents a review in our application
+    """
     ticket = models.ForeignKey(to=Ticket, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(
         validators=[

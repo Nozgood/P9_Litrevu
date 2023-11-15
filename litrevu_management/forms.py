@@ -5,6 +5,11 @@ RATING_CHOICES = [(value, str(value)) for value in range(6)]
 
 
 class TicketForm(forms.ModelForm):
+    """
+    TicketForm is used to manage the creation of a ticket received from
+    the front in our django application.
+    """
+
     class Meta:
         model = Ticket
         fields = ['title', 'description', 'image']
@@ -20,6 +25,11 @@ class TicketForm(forms.ModelForm):
 
 
 class ReviewForm(forms.ModelForm):
+    """
+    ReviewForm is used to manage the creation of a ticket received from the
+    front in our Django Application.
+    """
+
     class Meta:
         model = Review
         fields = ['headline', 'rating', 'body']

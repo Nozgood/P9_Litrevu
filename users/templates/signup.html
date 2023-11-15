@@ -9,10 +9,12 @@
                 <form action="" method="post" novalidate class="mb-3">
                     {% csrf_token %}
                     {% bootstrap_form user_form layout='floating' %}
-                    <input type="submit" value="S'inscrire" class="btn btn-primary w-100">
+                    <input type="submit" value="S'inscrire"
+                           class="btn btn-primary w-100">
                 </form>
                 <div class="text-center">
-                    <a href="{% url 'users:login' %}" class="d-block mt-3 text-decoration-none">Retourner</a>
+                    <a href="{% url 'users:login' %}"
+                       class="d-block mt-3 text-decoration-none">Retourner</a>
                 </div>
             </div>
         </div>
