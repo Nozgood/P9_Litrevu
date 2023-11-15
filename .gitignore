@@ -1,5 +1,8 @@
 env
 .idea
 db.sqlite3
+__pycache__/
 litrevu/__pycache__/
+litrevu/migrations/__pycache__/
 litrevu_management/__pycache__/
+litrevu_management/migrations/__pycache__/

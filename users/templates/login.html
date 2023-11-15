@@ -31,7 +31,9 @@
                         {% endfor %}
                         <button class="btn btn-primary" type="submit">Se connecter</button>
                     </form>
-                    {{ message }}
+                    {% if message %}
+                        <div class="alert alert-danger mt-4">{{ message }}</div>
+                    {% endif %}
                 </div>
             </div>
         </div>
