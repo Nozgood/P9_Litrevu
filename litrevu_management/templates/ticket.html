@@ -1,0 +1,47 @@
+{% load custom_filters %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="mb-2">
+            <div class="d-flex card-text text-muted justify-content-between">
+                {% if personal_view %}
+                    <span>Vous avez publié un ticket</span>
+                {% else %}
+                    {% if ticket.user == request.user %}
+                        <span>Vous avez demandé une critique.</span>
+                    {% else %}
+                        <span>{{ ticket.user.username }} a demandé une critique.</span>
+                    {% endif %}
+                {% endif %}
+                <span>{{ ticket.time_created }}</span>
+            </div>
+        </div>
+        <h5 class="card-title">{{ ticket.title }}</h5>
+        <span>{{ ticket.description }}</span>
+    </div>
+    {% if ticket.image %}
+        <div class="container-sm p-4 d-flex justify-content-center overflow-hidden">
+            <img class="img-fluid" src="{{ ticket.image.url }}"
+                 alt="image du ticket">
+        </div>
+    {% endif %}
+    {% if personal_view %}
+        <div class="card-footer">
+            <div class="d-flex gap-3 justify-content-end">
+                <a class="btn btn-primary"
+                   href="{% url 'litrevu:update_ticket' ticket_id=item.id %}">Modifier</a>
+                <form action="{% url 'litrevu:delete_ticket' ticket_id=item.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        {% if not ticket|has_review %}
+            <div class="card-footer d-flex justify-content-end">
+                <a class="btn btn-primary"
+                   href="{% url 'litrevu:create_review_from_ticket' ticket_id=item.id %}">Créer une
+                    critique</a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>

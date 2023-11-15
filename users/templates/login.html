@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="login py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="h3 mb-3">
+                        Inscrivez-vous !
+                    </h2>
+                    <a class="btn btn-outline-primary text-decoration-none"
+                       href="{% url 'users:signup' %}">S'inscrire</a>
+                </div>
+                <div class="col-md-6">
+                    <h1 class="h3 mb-4">Se connecter</h1>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <button class="btn btn-primary" type="submit">Se connecter</button>
+                    </form>
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

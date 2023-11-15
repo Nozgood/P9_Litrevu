@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <section class="d-flex flex-column align-items-center">
+        <h3 class="h3 mb-5">Suivre ou bloquer d'autres utilisateurs</h3>
+        <div class="container d-flex flex-column align-items-center mb-2">
+            <h5 class="h5">Suivre</h5>
+            <form action="{% url 'users:follow_user' %}" method="post"
+                  class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
+                {% csrf_token %}
+                {% bootstrap_form follow_form layout='inline' %}
+                <button class="btn btn-primary" type="submit">Suivre</button>
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == "follow_error error" %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="container d-flex flex-column align-items-center mb-5">
+            <h5 class="h5">Bloquer</h5>
+            <form action="{% url 'users:block_user' %}" method="post"
+                  class="d-flex justify-content-center align-items-center gap-4 mb-3 d-flex align-items-center">
+                {% csrf_token %}
+                {% bootstrap_form block_form layout='inline' %}
+                <button class="btn btn-primary" type="submit">Bloquer</button>
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == "block_error error" %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="container d-flex flex-column align-items-center gap-2 mb-5">
+            <h3 class="h3"> Abonnements</h3>
+            {% for following_user in user.following.all %}
+                <form action="{% url 'users:follow_user' unfollow=True %}" method="post"
+                      class="d-flex gap-4 align-items-baseline">
+                    {% csrf_token %}
+                    <p> {{ following_user.followed_user.username }}</p>
+                    <input type="hidden" name="username" value="{{ following_user.followed_user.username }}" readonly
+                           class="form-control"/>
+                    <button class="btn btn-primary" type="submit">Se désabonner</button>
+                </form>
+            {% endfor %}
+        </div>
+        <div class="container d-flex flex-column align-items-center gap-2 mb-5">
+            <h3 class="h3"> Abonnés </h3>
+            {% for follower in followers %}
+                <div class="d-flex justify-content-between align-items-center w-100 border rounded p-2">
+                    {{ follower.username }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="container d-flex flex-column align-items-center gap-2 mb-5">
+            <h3 class="h3">Bloqués</h3>
+            {% for blocked_user in user.user.all %}
+                <form action="{% url 'users:block_user' unblock=True %}" method="post"
+                      class="d-flex gap-4 align-items-baseline">
+                    {% csrf_token %}
+                    {{ unblock_form.is_unblock_form }}
+                    <p> {{ blocked_user.blocked_user.username }}</p>
+                    <input type="hidden" name="username"
+                           value="{{ blocked_user.blocked_user.username }}" readonly class="form-control"/>
+                    <button class="btn btn-primary" type="submit">Débloquer</button>
+                </form>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock content %}

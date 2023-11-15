@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% load custom_filters %}
+{% block content %}
+    <div class="d-flex justify-content-center mt-4">
+        <h1 class="h1">Vos posts</h1>
+    </div>
+    {% if items|length == 0 %}
+        <section>
+            <p class="alert alert-info">Il n'y a pas encore de post à afficher.</p>
+        </section>
+    {% else %}
+        <section class="container mb-4 mt-4">
+            {% for item in items %}
+                {% if item|hasattr:'rating' %}
+                    {% include "review.html" with review=item personal_view=True %}
+                {% else %}
+                    {% include "ticket.html" with ticket=item personal_view=True %}
+                {% endif %}
+            {% endfor %}
+        </section>
+    {% endif %}
+{% endblock content %}
