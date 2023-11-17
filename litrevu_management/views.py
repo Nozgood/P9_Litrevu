@@ -16,12 +16,13 @@ def home(request):
         items_to_display.extend(
             Review.objects.filter(user=following.followed_user))
     personal_tickets = Ticket.objects.filter(user=request.user)
-    personal_reviews = Review.objects.filter(user_id=request.user)
+    personal_reviews = Review.objects.filter(user=request.user)
     for personal_ticket in personal_tickets:
         review_associated = personal_ticket.review_set.all()
         items_to_display.extend(review_associated)
     items_to_display.extend(personal_tickets)
     items_to_display.extend(personal_reviews)
+    items_to_display = list(set(items_to_display))
     sorted_items = sorted(
         items_to_display,
         key=lambda item: item.time_created,
